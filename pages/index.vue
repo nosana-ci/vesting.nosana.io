@@ -27,13 +27,14 @@
             <strong>Find Vesting Contracts</strong>
           </button>
         </form>
-        <div v-for="vesting in vestings" :key="vesting.pubkey.toString()">
-          <nuxt-link :to="'/address/'+vesting.pubkey">{{vesting.pubkey}}</nuxt-link>
+        <div v-for="vesting, pubkey in vestings" :key="pubkey">
+          <nuxt-link :to="'/address/'+pubkey">{{pubkey}}</nuxt-link> - 
+          {{ +(vesting.withdrawn_amount/1000000) }} / {{ +(vesting.total_amount/1000000) }} <span class="has-text-accent">NOS</span>
         </div>
         <div v-if="loading">
           Loading..
         </div>
-        <div v-else-if="vestings && !vestings.length">
+        <div v-else-if="vestings && !Object.keys(vestings).length">
           No vesting contracts found
         </div>
         <div v-else-if="vestings" class="mt-6">
@@ -46,6 +47,7 @@
 
 <script>
 import { PublicKey } from '@solana/web3.js'
+const Layout = require('@streamflow/timelock/dist/layout');
 
 export default {
   components: {},
@@ -92,7 +94,12 @@ export default {
             },
           ],
         });
-        this.vestings = response
+        let vestings = {}
+        for (let i = 0; i < response.length; i++) {
+          const info = await this.$sol.web3.getAccountInfo(response[i].pubkey)
+          vestings[response[i].pubkey.toString()] = Layout.decode(Buffer.from(info.data));
+        }
+        this.vestings = vestings;
       } catch (e) {
         console.error(e)
         
