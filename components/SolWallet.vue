@@ -38,7 +38,7 @@
 
             <nuxt-link
               class="button is-accent px-5"
-              to="/pieces"
+              to="/"
               exact-active-class="is-active"
               @click="
                 $sol.loginModal = false;

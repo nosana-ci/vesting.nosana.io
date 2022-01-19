@@ -25,8 +25,8 @@
             <nuxt-link to="/" class="button">Home</nuxt-link>
           </div>
           <div v-else>
-            <div class="has-text-weight-bold subtitle mb-1">Sender Contract</div>
-            <h3 v-if="vesting && vesting.sender !== null" class="subtitle blockchain-address"><a :href="`${explorer}/address/${vesting.sender}`" target="_blank">{{ vesting.sender }} <i class="fas fa-external-link-alt"></i></a></h3>
+            <div class="has-text-weight-bold subtitle mb-1">Vesting Contract</div>
+            <h3 v-if="address" class="subtitle blockchain-address"><a :href="`${explorer}/address/${address}`" target="_blank">{{ address }} <i class="fas fa-external-link-alt"></i></a></h3>
             <div class="has-text-weight-bold subtitle mb-1">Recipient Address</div>
             <h3 class="subtitle blockchain-address"><span
               v-if="vesting && vesting.recipient !== null"><a :href="`${explorer}/address/${vesting.recipient}`" target="_blank">{{ vesting.recipient }} <i class="fas fa-external-link-alt"></i></a></span><span v-else>...</span></h3> 
@@ -136,7 +136,7 @@ export default {
       this.error = 'Invalid address'
     } else {
       this.timer = setInterval(() => { this.refreshReleasable = !this.refreshReleasable }, 1000)
-      this.getBalanceVestingContract()
+      this.getVestingInfo()
 
     }
   },
@@ -161,7 +161,7 @@ export default {
 
   computed: {
     solWallet() {
-      return (this.$sol) ? this.$sol.wallet : null
+      return (this.$sol) ? this.$sol.publicKey : null
     },
     releasable() {
       // eslint-disable-next-line
@@ -196,112 +196,17 @@ export default {
         this.error = error
       }
     },
-    async getCliff() {
+
+    async getVestingInfo() {
       this.loading = true
       try {
-        const response = await this.$sol.getCliff(this.address)
-        this.vesting.cliff = parseInt(response)
-      } catch (error) {
-        this.handleError(error)
-      }
-    },
-    async getDuration() {
-      this.loading = true
-      try {
-        const response = await this.$sol.getDuration(this.address)
-        this.vesting.duration = parseInt(response)
-      } catch (error) {
-        this.handleError(error)
-      }
-    },
-    async getStart() {
-      this.loading = true
-      try {
-        const response = await this.$sol.getStart(this.address)
-        this.vesting.start = parseInt(response)
-      } catch (error) {
-        this.handleError(error)
-      }
-    },
-    async getBeneficiary() {
-      this.loading = true
-      try {
-        const response = await this.$sol.getBeneficiary(this.address)
-        this.vesting.beneficiary = response
+
+        const response = await this.$sol.web3.getAccountInfo(new PublicKey(this.address))
+        this.vesting = Layout.decode(Buffer.from(response.data));
       } catch (error) {
         this.handleError(error)
       }
       this.loading = false
-    },
-    async getReleasedFunds() {
-      this.loading = true
-      try {
-        const response = await this.$sol.getReleasedFunds(this.address)
-        this.vesting.released = parseFloat(response)
-      } catch (error) {
-        this.handleError(error)
-      }
-      this.loading = false
-    },
-    async getBalanceVestingContract() {
-      this.loading = true
-      try {
-        console.log(this.$sol.web3, new PublicKey(this.address))
-        let bytes
-        const response = await this.$sol.web3.getProgramAccounts(new PublicKey('8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX'), {
-    filters: [
-      {
-        memcmp: {
-          offset: 112,
-          bytes: 'CsirJWsaU91sHNnM93crkcd2J5ZJDYQyA1UH2WtVub6R',
-        },
-      },
-    ],
-  });
-        //const response = await this.$sol.web3.getAccountInfo(new PublicKey(this.address))
-        //const response = await Stream.get(this.$sol.web3, new PublicKey(this.address))
-        console.log(response[0].account.data);
-        console.log(Buffer.from(response[0].account.data))
-        this.vesting = Layout.decode(Buffer.from(response[0].account.data));
-      } catch (error) {
-        this.handleError(error)
-      }
-      this.loading = false
-    },
-    async claim() {
-      if (!this.address) {
-        this.error = "No vesting contract selected"
-        return
-      }
-      if (!this.solWallet) {
-        this.$sol.loginModal = true
-        return
-      }
-      this.loading = true
-      try {
-        this.$sol.releaseFunds(this.address)
-          .send({from: this.$sol.wallet[0]})
-          .on('transactionHash', hash =>{
-            this.$set(this.tx, 'transactionHash', hash)
-          })
-          .on('confirmation', (confirmationNumber, receipt) => {
-            console.log("conf", confirmationNumber)
-          })
-          .on('receipt', receipt => {
-            this.tx = receipt
-            this.loading = false
-            this.getBalanceVestingContract()
-            this.getReleasedFunds()
-          })
-          .on('error', error => {
-            this.handleError(error)
-            this.tx = null
-            this.loading = false
-          });
-      } catch (error) {
-        this.handleError(error)
-        this.loading = false
-      }
     }
   }
 }

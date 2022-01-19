@@ -10,46 +10,94 @@
       </div>
     </section>
     <div class="container">
-      <div class="box is-horizontal-centered has-limited-width px-6 pb-6 pt-5 gradient-block has-border-gradient has-radius">
+      <div class="box is-horizontal-centered has-text-centered has-limited-width px-6 pb-6 pt-5 gradient-block has-border-gradient has-radius">
+
         <h2 class="title is-2 has-text-centered has-text-weight-medium mb-6 mt-3">Vesting Contract</h2>
-        <form @submit.prevent="$router.push(`/address/${address}`)">
-          <input v-model="address" type="text" class="input is-medium is-primary is-transparent" required placeholder="BSC address" />
-          <button :disabled="!address" class="button is-medium is-accent is-fullwidth mt-5" type="submit">
+               <div v-if="!solWallet && !vestings">
+               <div class="button is-medium is-accent" @click="$sol.loginModal = true">
+              <strong>Connect Wallet</strong>
+            </div>
+            <h3 class="subtitle mt-4">
+              - OR -
+            </h3>
+               </div>
+        <form @submit.prevent="retrieveVestingContracts(address)" v-if="!vestings">
+          <input v-model="address" type="text" class="input is-medium is-primary is-transparent" required placeholder="SOL address" />
+          <button :disabled="loading" :class="{'is-disabled': loading}" class="button is-medium is-accent is-fullwidth mt-5" type="submit">
             <strong>Submit</strong>
           </button>
         </form>
+        <div v-for="vesting in vestings" :key="vesting.pubkey.toString()">
+          <nuxt-link :to="'/address/'+vesting.pubkey">{{vesting.pubkey}}</nuxt-link>
+        </div>
+        <div v-if="loading">
+          Loading..
+        </div>
+        <div v-if="vestings && !vestings.length">
+          No vesting contracts found
+        </div>
       </div>
     </div>
-    <!-- Educational Resources -->
-    <!-- <div class="has-text-centered my-6">
-      <a class="" href="https://nosana.io" target="_blank">
-        <strong>nosana.io</strong>
-      </a>
-    </div> -->
   </div>
 </template>
 
 <script>
+import { PublicKey } from '@solana/web3.js'
 
 export default {
   components: {},
+  created() {
+    console.log('test', this.solWallet)
+    if (this.solWallet) {
+        this.retrieveVestingContracts(this.solWallet)
+      }
+  },
+  computed: {
+    solWallet() {
+      return (this.$sol) ? this.$sol.publicKey : null
+    },
+  },
+  watch: {
+    solWallet(publicKey) {
+      if (publicKey) {
+        this.retrieveVestingContracts(publicKey)
+      }
+    }
+  },
   data () {
     return {
-      address: null
+      address: null,
+      loading: null,
+      vestings: null
     }
   },
 
-  methods: {},
-
-  created () {
+  methods: {
+    async retrieveVestingContracts(publicKey) {
+      this.loading = true
+      try {
+         const response = await this.$sol.web3.getProgramAccounts(new PublicKey('8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX'), {
+          filters: [
+            {
+              memcmp: {
+                offset: 112,
+                bytes: publicKey,
+              },
+            },
+          ],
+        });
+        this.vestings = response
+      } catch (e) {
+        console.error(e)
+        
+      }
+      this.loading = false;
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.site-title {
-  font-size: 75px;
-}
 .bg-dark {
   background-image: url('~assets/img/bg.jpg');
   color: white;

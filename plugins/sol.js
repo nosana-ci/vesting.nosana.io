@@ -98,11 +98,11 @@ export default (context, inject) => {
 
           this.publicKey = wallet.publicKey.toString()
           this.loginModal = false
-          if (context.query.redirect) {
-            context.app.router.push(context.query.redirect)
-          } else {
-            context.app.router.push('/account')
-          }
+          // if (context.query.redirect) {
+          //   context.app.router.push(context.query.redirect)
+          // } else {
+          //   context.app.router.push('/account')
+          // }
         }
       },
       onDisconnect () {
@@ -163,7 +163,6 @@ export default (context, inject) => {
           this.publicKey = null
         }
         this.clear()
-        context.app.router.push('/')
       },
 
       clear () {
