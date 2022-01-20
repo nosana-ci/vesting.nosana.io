@@ -34,7 +34,7 @@ export default (context, inject) => {
       return {
         explorer: process.env.NUXT_ENV_SOL_EXPLORER,
         balance: null,
-        publicKey: null,
+        wallet: null,
         loginModal: false,
         web3,
         walletListenerId: null,
@@ -64,7 +64,7 @@ export default (context, inject) => {
       },
 
       onWalletChange (_accountInfo) {
-        this.publicKey = wallet.publicKey.toString()
+        this.wallet = wallet
 
         if (typeof _accountInfo.lamports === 'number') {
           this.balance = _accountInfo.lamports
@@ -96,7 +96,7 @@ export default (context, inject) => {
           this.subWallet()
           this.getBalance()
 
-          this.publicKey = wallet.publicKey.toString()
+          this.wallet = wallet
           this.loginModal = false
           // if (context.query.redirect) {
           //   context.app.router.push(context.query.redirect)
@@ -160,7 +160,7 @@ export default (context, inject) => {
         if (connectingAdapter) {
           await connectingAdapter.disconnect()
           connectingAdapter = null
-          this.publicKey = null
+          this.wallet = null
         }
         this.clear()
       },

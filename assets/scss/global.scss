@@ -127,6 +127,11 @@ a.card {
 
 .box {
   position: relative;
+  border: 1px solid $secondary;
+  &.is-info {
+    background: rgba($info, 0.2);
+    border: 1px solid $info;
+  }
 }
 
 .gradient-block {

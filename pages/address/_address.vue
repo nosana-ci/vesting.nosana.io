@@ -95,9 +95,9 @@
               </form>
             </div>
           </div>
-          <div v-if="tx !== null && tx.transactionHash" class="notification is-success mb-6">
-            <button class="delete" @click="tx = null"/>
-            Transaction sent: <a :href="`${explorer}/transaction/${tx.transactionHash}`">{{ tx.transactionHash }}</a>
+          <div v-if="success" class="notification is-success mb-6">
+            <button class="delete" @click="success = null"/>
+            Transaction sent: <a :href="`${explorer}/tx/${success}`" class="is-size-7">{{ success }}</a>
           </div>
         </div>
       </div>
@@ -112,8 +112,10 @@
 
 <script>
 const Layout = require('@streamflow/timelock/dist/layout');
+import Timelock from '@streamflow/timelock'
 import ErrorModal from '@/components/ErrorModal'
 import { PublicKey } from '@solana/web3.js'
+import { Address, BN } from "@streamflow/timelock/node_modules/@project-serum/anchor";
 
 export default {
   components: {
@@ -124,10 +126,10 @@ export default {
       address: this.$route.params.address,
       error: null,
       loading: false,
+      success: null,
       refreshReleasable: true,
       explorer: process.env.NUXT_ENV_BLOCKEXPLORER,
-      vesting: null,
-      tx: {}
+      vesting: null
     }
   },
 
@@ -161,7 +163,7 @@ export default {
 
   computed: {
     solWallet() {
-      return (this.$sol) ? this.$sol.publicKey : null
+      return (this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey) ? this.$sol.wallet.publicKey.toString() : null
     },
     releasable() {
       // eslint-disable-next-line
@@ -174,11 +176,11 @@ export default {
   },
 
   methods: {
-    calculateReleasable(start, end, locked, released) {
+    calculateReleasable(start, end, total, released) {
       const now = new Date()
       const duration = end - start
-      const releasable = (((locked+released) * (now.getTime()/1000 - start))/duration) - released;
-      return Math.max(0, Math.min(locked, releasable))
+      const releasable = ((total * (now.getTime()/1000 - start))/duration) - released;
+      return Math.max(0, Math.min(total-released, releasable))
     },
     handleError(error) {
       console.error(error)
@@ -196,7 +198,18 @@ export default {
         this.error = error
       }
     },
-
+    async claim () {
+      this.loading = true
+      try {
+        const response = await Timelock.withdraw(this.$sol.web3, this.$sol.wallet, '8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX', new PublicKey(this.address), new BN(0));
+        this.success = response;
+        this.getVestingInfo();
+      } catch (e) {
+        alert('something went wrong')
+        this.handleError(error)
+      }
+      this.loading = false
+    },
     async getVestingInfo() {
       this.loading = true
       try {
@@ -213,10 +226,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.site-title {
-  font-size: 75px;
-}
-
 .blockchain-address {
   color: #1C0039;
   text-overflow: ellipsis;
@@ -224,9 +233,5 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   display: block;
-}
-
-.tilde {
-  font-family: $subtitle-family;
 }
 </style>

@@ -27,17 +27,26 @@
             <strong>Find Vesting Contracts</strong>
           </button>
         </form>
-        <div v-for="vesting, pubkey in vestings" :key="pubkey">
-          <nuxt-link :to="'/address/'+pubkey">{{pubkey}}</nuxt-link> - 
-          {{ +(vesting.withdrawn_amount/1000000) }} / {{ +(vesting.total_amount/1000000) }} <span class="has-text-accent">NOS</span>
+        <div v-for="vesting, pubkey in vestings" :key="pubkey" class="box is-info">
+          <nuxt-link :to="'/address/'+pubkey" class="is-clickable is-flex is-flex-wrap-wrap is-align-items-center" @click="active !== pubkey ? step = pubkey : active = null">
+            <h3 class="subtitle m-0">
+              {{ +(vesting.withdrawn_amount/1000000) }} / {{ +(vesting.total_amount/1000000) }} <span class="has-text-accent">NOS</span>
+            </h3>
+            <div class="is-size-7 has-overflow-ellipses mr-4" style="margin-left: auto">
+              <span class="has-text-white">stream id</span> {{pubkey}}
+            </div>
+            <div>
+              <i class="fas fa-chevron-right" :class="{'fa-chevron-up': active === pubkey}" />
+            </div>
+          </nuxt-link>
         </div>
         <div v-if="loading">
           Loading..
         </div>
         <div v-else-if="vestings && !Object.keys(vestings).length">
-          No vesting contracts found
+          No NOS vesting contracts found
         </div>
-        <div v-else-if="vestings" class="mt-6">
+        <div v-if="vestings" class="mt-6">
           <a @click.prevent="reload" class="is-size-6  has-text-danger ">Use different address</a>
         </div>
       </div>
@@ -52,18 +61,18 @@ const Layout = require('@streamflow/timelock/dist/layout');
 export default {
   components: {},
   created() {
-    console.log('test', this.solWallet)
     if (this.solWallet) {
         this.retrieveVestingContracts(this.solWallet)
       }
   },
   computed: {
     solWallet() {
-      return (this.$sol) ? this.$sol.publicKey : null
+      return (this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey) ? this.$sol.wallet.publicKey.toString() : null
     },
   },
   watch: {
     solWallet(publicKey) {
+      console.log('change', publicKey)
       if (publicKey) {
         this.retrieveVestingContracts(publicKey)
       }
@@ -73,7 +82,8 @@ export default {
     return {
       address: null,
       loading: null,
-      vestings: null
+      vestings: null,
+      active: null
     }
   },
 
@@ -89,7 +99,7 @@ export default {
             {
               memcmp: {
                 offset: 112,
-                bytes: publicKey,
+                bytes: publicKey.trim(),
               },
             },
           ],
@@ -97,7 +107,10 @@ export default {
         let vestings = {}
         for (let i = 0; i < response.length; i++) {
           const info = await this.$sol.web3.getAccountInfo(response[i].pubkey)
-          vestings[response[i].pubkey.toString()] = Layout.decode(Buffer.from(info.data));
+          const decoded = Layout.decode(Buffer.from(info.data));
+          if (decoded.escrow_tokens.toString() === process.env.NUXT_ENV_TOKEN_ADDRESS || true) {
+          vestings[response[i].pubkey.toString()] = decoded;
+          }
         }
         this.vestings = vestings;
       } catch (e) {

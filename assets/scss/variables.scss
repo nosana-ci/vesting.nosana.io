@@ -22,6 +22,9 @@ $custom-colors: (
 
 $text: white;
 
+$text-strong: white;
+$modal-card-title-color: black;
+
 //$link: $secondary;
 $link-hover: $accent;
 $link-focus: $accent;
@@ -35,8 +38,19 @@ $subtitle-family: $family-headers;
 
 $body-line-height: 1.7;
 $button-padding-horizontal: 1.7em;
+$body-background-color: #010C04;
 
-$dark-mode-background: #010C04;
+$scheme-main: $black;
+$scheme-main-bis: $black-bis;
+$scheme-main-ter: $black-ter;
+$modal-card-head-background-color: $accent;
+$hr-background-color: $secondary;
+$hr-height: 1px;
+$box-background-color: rgba($secondary, 0.1);
+
+$background: $black-ter;
+$tabs-link-active-color: $secondary;
+$tabs-link-active-border-bottom-color: $secondary;
 
 $navbar-height: 5rem;
 $control-border-width: 2px;
