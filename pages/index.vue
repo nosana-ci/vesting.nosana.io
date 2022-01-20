@@ -108,7 +108,7 @@ export default {
         for (let i = 0; i < response.length; i++) {
           const info = await this.$sol.web3.getAccountInfo(response[i].pubkey)
           const decoded = Layout.decode(Buffer.from(info.data));
-          if (decoded.escrow_tokens.toString() === process.env.NUXT_ENV_TOKEN_ADDRESS || true) {
+          if (decoded.escrow_tokens.toString() === process.env.NUXT_ENV_TOKEN_ADDRESS) {
           vestings[response[i].pubkey.toString()] = decoded;
           }
         }
