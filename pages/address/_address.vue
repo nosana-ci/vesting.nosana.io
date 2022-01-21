@@ -59,7 +59,7 @@
             <div class="column is-half">
               <div class="box has-background-black-transparent py-5 bg-dark has-radius has-text-centered" style="height: 100%;">
               <div class="has-text-weight-bold subtitle mb-5">Release rate</div>
-              <h2 class="title has-text-accent is-4 mb-2 has-text-weight-medium" v-if="vesting && vesting.period && vesting.total_amount">{{+(((vesting.total_amount - vesting.cliff_amount) / ((vesting.end_time - vesting.start_time)/vesting.period))/1000000).toFixed(2)}} NOS per {{ vesting.period }}s</h2><h2
+              <h2 class="title has-text-accent is-4 mb-2 has-text-weight-medium" v-if="vesting && vesting.period && vesting.total_amount">{{+(((vesting.total_amount - vesting.cliff_amount) / ((vesting.end_time - vesting.start_time)/vesting.period))/1000000).toFixed(6)}} NOS per {{ vesting.period }}s</h2><h2
                 v-else>...</h2>
               <div class=" is-size-7" v-if="vesting && vesting.period">Next unlock {{ nextUnlock }}s</div>
 
