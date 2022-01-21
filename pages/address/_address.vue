@@ -33,16 +33,6 @@
           </div>
         </div>
           <div class="columns is-multiline ">
-  <!--            <div class="column">-->
-  <!--              <div class="has-text-weight-bold">Locked tokens</div>-->
-  <!--              <h2 class="subtitle"><span v-if="vesting.locked !== null">{{ vesting.locked }}</span><span-->
-  <!--                v-else>...</span></h2>-->
-  <!--            </div>-->
-  <!--            <div class="column is-half">-->
-  <!--              <div class="has-text-weight-bold">Start date</div>-->
-  <!--              <small><span v-if="vesting && vesting.start">{{ new Date(parseInt(vesting.start) * 1000) }}</span><span-->
-  <!--                v-else>...</span></small>-->
-  <!--            </div>-->
             <div class="column is-half">
               <div class="box has-background-black-transparent py-5 bg-dark has-radius has-text-centered">
                 <div class="has-text-weight-bold subtitle mb-5">Vesting Start Date</div>
@@ -55,6 +45,24 @@
               <div class="has-text-weight-bold subtitle mb-5">Vesting End Date</div>
               <h2 class="title has-text-accent is-4 mb-2 has-text-weight-medium" v-if="vesting && vesting.end_time ">{{ new Date(vesting.end_time * 1000) | formatDate }}</h2><h2
                 v-else>...</h2>
+              </div>
+            </div>
+             <div class="column is-half">
+              <div class="box has-background-black-transparent py-5 bg-dark has-radius has-text-centered" style="height: 100%;">
+              <div class="has-text-weight-bold subtitle mb-5">Unlocked at start time</div>
+              <h2 class="title has-text-accent is-4 mb-2 has-text-weight-medium" v-if="vesting && vesting.cliff_amount !== null ">{{ +(vesting.cliff_amount/1000000) }}</h2>
+              <h2 v-else>...</h2>
+              <div class=" is-size-7" v-if="vesting && vesting.cliff">{{ new Date(vesting.cliff * 1000) | formatDate }}</div>
+
+              </div>
+            </div>
+            <div class="column is-half">
+              <div class="box has-background-black-transparent py-5 bg-dark has-radius has-text-centered" style="height: 100%;">
+              <div class="has-text-weight-bold subtitle mb-5">Release rate</div>
+              <h2 class="title has-text-accent is-4 mb-2 has-text-weight-medium" v-if="vesting && vesting.period && vesting.total_amount">{{+(((vesting.total_amount - vesting.cliff_amount) / ((vesting.end_time - vesting.start_time)/vesting.period))/1000000).toFixed(2)}} NOS per {{ vesting.period }}s</h2><h2
+                v-else>...</h2>
+              <div class=" is-size-7" v-if="vesting && vesting.period">Next unlock {{ nextUnlock }}s</div>
+
               </div>
             </div>
             <div class="column is-half">
@@ -168,19 +176,29 @@ export default {
     releasable() {
       // eslint-disable-next-line
       this.refreshReleasable
-      if (this.vesting && this.vesting.start_time && this.vesting.end_time && this.vesting.total_amount ) {
-        return this.calculateReleasable(this.vesting.start_time, this.vesting.end_time, this.vesting.total_amount, this.vesting.withdrawn_amount)
+      if (this.vesting) {
+        return this.calculateReleasable(this.vesting.start_time, this.vesting.end_time, this.vesting.total_amount, this.vesting.withdrawn_amount, this.vesting.cliff_amount)
+      }
+      return null
+    },
+    nextUnlock() {
+      // eslint-disable-next-line
+      this.refreshReleasable
+      if (this.vesting) {
+         const now = new Date()
+        return 0;
       }
       return null
     }
   },
 
   methods: {
-    calculateReleasable(start, end, total, released) {
+    calculateReleasable(start, end, total, released, cliff) {
       const now = new Date()
+      if (now < start) return 0;
       const duration = end - start
-      const releasable = ((total * (now.getTime()/1000 - start))/duration) - released;
-      return Math.max(0, Math.min(total-released, releasable))
+      const releasable = ((((+total) - (+cliff)) * (now.getTime()/1000 - start))/duration) - (+released) + (+cliff);
+      return Math.min(+total - +released, releasable)
     },
     handleError(error) {
       console.error(error)
