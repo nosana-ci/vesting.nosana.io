@@ -79,7 +79,7 @@
                 <div class="has-text-weight-bold subtitle mb-5">Claimable</div>
                 <h2 class="title has-text-accent is-4 has-text-weight-medium">
                   <span v-if="releasable !== null && (typeof releasable !== 'undefined')">
-                    {{+(releasable/1000000).toFixed(4)}}
+                    ~{{+(releasable/1000000).toFixed(2)}}
                     <span class="has-text-weight-light">NOS</span>
                   </span>
                   <span v-else>...</span>
@@ -93,7 +93,7 @@
             </div>
             <div v-else>
               <form @submit.prevent="claim">
-                <button class="button is-medium is-accent is-fullwidth mt-5" :class="{'is-loading': loading}" :disabled="loading || !address || !solWallet || !releasable"
+                <button class="button is-medium is-accent is-fullwidth mt-5" :class="{'is-loading': loading}" :disabled="loading || !address || !solWallet || !releasable || releasable < 10000"
                         type="submit">
                   <strong>Claim NOS Tokens</strong>
                 </button>
@@ -177,7 +177,7 @@ export default {
       // eslint-disable-next-line
       this.refreshReleasable
       if (this.vesting) {
-        return this.calculateReleasable(this.vesting.start_time, this.vesting.end_time, this.vesting.total_amount, this.vesting.withdrawn_amount, this.vesting.cliff_amount)
+        return this.calculateReleasable(this.vesting.start_time, this.vesting.end_time, this.vesting.total_amount, this.vesting.withdrawn_amount, this.vesting.cliff_amount, this.vesting.period)
       }
       return null
     },
@@ -186,16 +186,18 @@ export default {
       this.refreshReleasable
       if (this.vesting) {
          const now = new Date()
-        return 0;
+        return this.vesting.period - parseInt((now.getTime() / 1000) % this.vesting.period);
       }
       return null
     }
   },
 
   methods: {
-    calculateReleasable(start, end, total, released, cliff) {
+    calculateReleasable(start, end, total, released, cliff, period) {
       const now = new Date()
       if (now < start) return 0;
+      const locked = (now.getTime() / 1000) % this.vesting.period;
+      now.setSeconds(now.getSeconds() - locked);
       const duration = end - start
       const releasable = ((((+total) - (+cliff)) * (now.getTime()/1000 - start))/duration) - (+released) + (+cliff);
       return Math.min(+total - +released, releasable)
@@ -224,7 +226,7 @@ export default {
         this.getVestingInfo();
       } catch (e) {
         alert('something went wrong')
-        this.handleError(error)
+        this.handleError(e)
       }
       this.loading = false
     },
