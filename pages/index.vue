@@ -4,50 +4,99 @@
       <div class="container">
         <div class="has-text-centered block">
           <a class="" href="https://nosana.io" target="_blank">
-            <img :src="require('@/assets/img/logo.svg')" width="175" class="mb-4">
+            <img
+              :src="require('@/assets/img/logo.svg')"
+              width="175"
+              class="mb-4"
+            />
           </a>
         </div>
       </div>
     </section>
     <div class="container">
-      <div class="box is-horizontal-centered has-text-centered has-limited-width px-6 pb-6 pt-5 gradient-block has-border-gradient has-radius">
-
-        <h2 class="title is-2 has-text-centered has-text-weight-medium mb-6 mt-3">Vesting Contract</h2>
-               <div v-if="!solWallet && !vestings">
-               <div class="button is-medium is-accent" @click="$sol.loginModal = true">
-              <strong>Connect Wallet</strong>
-            </div>
-            <h3 class="subtitle my-3">
-              - OR -
-            </h3>
-               </div>
-        <form @submit.prevent="retrieveVestingContracts(address)" v-if="!vestings">
-          <input v-model="address" type="text" class="input is-medium is-primary is-transparent" required placeholder="SOL address" />
-          <button :disabled="loading" :class="{'is-disabled': loading}" class="button is-medium is-accent is-fullwidth mt-5" type="submit">
+      <div
+        class="
+          box
+          is-horizontal-centered
+          has-text-centered has-limited-width
+          px-6
+          pb-6
+          pt-5
+          gradient-block
+          has-border-gradient has-radius
+        "
+      >
+        <h2
+          class="title is-2 has-text-centered has-text-weight-medium mb-6 mt-3"
+        >
+          Vesting Contract
+        </h2>
+        <div v-if="!solWallet && !vestings">
+          <div
+            class="button is-medium is-accent"
+            @click="$sol.loginModal = true"
+          >
+            <strong>Connect Wallet</strong>
+          </div>
+          <h3 class="subtitle my-3">- OR -</h3>
+        </div>
+        <form
+          @submit.prevent="retrieveVestingContracts(address)"
+          v-if="!vestings"
+        >
+          <input
+            v-model="address"
+            type="text"
+            class="input is-medium is-primary is-transparent"
+            required
+            placeholder="SOL address"
+          />
+          <button
+            :disabled="loading"
+            :class="{ 'is-disabled': loading }"
+            class="button is-medium is-accent is-fullwidth mt-5"
+            type="submit"
+          >
             <strong>Find Vesting Contracts</strong>
           </button>
         </form>
-        <div v-for="vesting, pubkey in vestings" :key="pubkey" class="box is-info">
-          <nuxt-link :to="'/address/'+pubkey" class="is-clickable is-flex is-flex-wrap-wrap is-align-items-center" @click="active !== pubkey ? step = pubkey : active = null">
+        <div
+          v-for="(vesting, pubkey) in vestings"
+          :key="pubkey"
+          class="box is-info"
+        >
+          <nuxt-link
+            :to="'/address/' + pubkey"
+            class="is-clickable is-flex is-flex-wrap-wrap is-align-items-center"
+            @click="active !== pubkey ? (step = pubkey) : (active = null)"
+          >
             <h3 class="subtitle m-0">
-              {{ +(vesting.withdrawn_amount/1000000) }} / {{ +(vesting.total_amount/1000000) }} <span class="has-text-accent">NOS</span>
+              {{ +(vesting.withdrawn_amount / 1000000) }} /
+              {{ +(vesting.total_amount / 1000000) }}
+              <span class="has-text-accent">NOS</span>
             </h3>
-            <div class="is-size-7 has-overflow-ellipses mr-4" style="margin-left: auto">
-              <span class="has-text-white">stream id</span> {{pubkey}}
+            <div
+              class="is-size-7 has-overflow-ellipses mr-4"
+              style="margin-left: auto"
+            >
+              <span class="has-text-white">stream id</span> {{ pubkey }}
             </div>
             <div>
-              <i class="fas fa-chevron-right" :class="{'fa-chevron-up': active === pubkey}" />
+              <i
+                class="fas fa-chevron-right"
+                :class="{ 'fa-chevron-up': active === pubkey }"
+              />
             </div>
           </nuxt-link>
         </div>
-        <div v-if="loading">
-          Loading..
-        </div>
+        <div v-if="loading">Loading..</div>
         <div v-else-if="vestings && !Object.keys(vestings).length">
           No NOS vesting contracts found
         </div>
         <div v-if="vestings" class="mt-6">
-          <a @click.prevent="reload" class="is-size-6  has-text-danger ">Use different address</a>
+          <a @click.prevent="reload" class="is-size-6 has-text-danger"
+            >Use different address</a
+          >
         </div>
       </div>
     </div>
@@ -55,87 +104,91 @@
 </template>
 
 <script>
-import { PublicKey } from '@solana/web3.js'
-const Layout = require('@streamflow/timelock/dist/layout');
+import { PublicKey } from "@solana/web3.js";
+const Layout = require("@streamflow/timelock/dist/layout");
 
 export default {
   components: {},
   created() {
     if (this.solWallet) {
-        this.retrieveVestingContracts(this.solWallet)
-      }
+      this.retrieveVestingContracts(this.solWallet);
+    }
   },
   computed: {
     solWallet() {
-      return (this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey) ? this.$sol.wallet.publicKey.toString() : null
-    },
+      return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
+        ? this.$sol.wallet.publicKey.toString()
+        : null;
+    }
   },
   watch: {
     solWallet(publicKey) {
-      console.log('change', publicKey)
+      console.log("change", publicKey);
       if (publicKey) {
-        this.retrieveVestingContracts(publicKey)
+        this.retrieveVestingContracts(publicKey);
       }
     }
   },
-  data () {
+  data() {
     return {
       address: null,
       loading: null,
       vestings: null,
       active: null
-    }
+    };
   },
 
   methods: {
     reload() {
-      window.location.reload(true)
+      window.location.reload(true);
     },
     async retrieveVestingContracts(publicKey) {
-      this.loading = true
+      this.loading = true;
       try {
-         const response = await this.$sol.web3.getProgramAccounts(new PublicKey('8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX'), {
-          filters: [
-            {
-              memcmp: {
-                offset: 112,
-                bytes: publicKey.trim(),
-              },
-            },
-          ],
-        });
-        let vestings = {}
+        const response = await this.$sol.web3.getProgramAccounts(
+          new PublicKey("8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX"),
+          {
+            filters: [
+              {
+                memcmp: {
+                  offset: 112,
+                  bytes: publicKey.trim()
+                }
+              }
+            ]
+          }
+        );
+        let vestings = {};
         for (let i = 0; i < response.length; i++) {
-          const info = await this.$sol.web3.getAccountInfo(response[i].pubkey)
+          const info = await this.$sol.web3.getAccountInfo(response[i].pubkey);
           const decoded = Layout.decode(Buffer.from(info.data));
-          const tokenInfo = await this.$sol.web3.getParsedAccountInfo(decoded.escrow_tokens);
-          if (tokenInfo && tokenInfo.value && tokenInfo.value.data.parsed.info.mint === process.env.NUXT_ENV_TOKEN_ADDRESS) {
-          vestings[response[i].pubkey.toString()] = decoded;
+          if (decoded.mint.toString() === process.env.NUXT_ENV_TOKEN_ADDRESS) {
+            vestings[response[i].pubkey.toString()] = decoded;
           }
         }
         this.vestings = vestings;
       } catch (e) {
-        console.error(e)
-        
+        console.error(e);
       }
       this.loading = false;
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
 .bg-dark {
-  background-image: url('~assets/img/bg.jpg');
+  background-image: url("~assets/img/bg.jpg");
   color: white;
-  .title, .subtitle {
+  .title,
+  .subtitle {
     color: white;
   }
 }
 .is-primary {
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   &::placeholder {
-    color: rgba(255,255,255,0.8);;
+    color: rgba(255, 255, 255, 0.8);
   }
 }
 </style>
