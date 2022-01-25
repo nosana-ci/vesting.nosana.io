@@ -70,7 +70,7 @@
             class="is-clickable is-flex is-flex-wrap-wrap is-align-items-center"
             @click="active !== pubkey ? (step = pubkey) : (active = null)"
           >
-            <h3 class="subtitle m-0">
+            <h3 class="subtitle m-0 is-6">
               {{ +(vesting.withdrawn_amount / 1000000) }} /
               {{ +(vesting.total_amount / 1000000) }}
               <span class="has-text-accent">NOS</span>
