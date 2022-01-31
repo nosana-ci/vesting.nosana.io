@@ -20,7 +20,7 @@
           box
           is-horizontal-centered
           has-limited-width
-          px-6
+          px-4
           pb-6
           pt-5
           gradient-block
@@ -33,17 +33,28 @@
           Vesting Contract
         </h2>
         <form @submit.prevent="createVesting()">
-          <div class="field">
-            <label class="label">Amount</label>
-            <div class="control">
+          <label class="label">Amount</label>
+
+          <div class="field has-addons">
+            <div class="control is-expanded">
               <input
+                required
                 v-model="amount"
                 class="input"
                 type="number"
                 step="0.01"
                 min="0"
+                :max="$sol.balance / 1e6"
                 placeholder="Amount in NOS"
               />
+            </div>
+            <div class="control">
+              <a
+                class="button"
+                @click="amount = ($sol.balance / 1e6).toFixed(2)"
+              >
+                Max ({{ ($sol.balance / 1e6).toFixed(2) }} NOS)
+              </a>
             </div>
           </div>
 
@@ -51,6 +62,7 @@
             <label class="label">Recipient Address</label>
             <div class="control">
               <input
+                required
                 v-model="recipient"
                 class="input is-primary"
                 type="text"
@@ -65,6 +77,7 @@
                 <label class="label">Start Date</label>
                 <div class="control is-expanded">
                   <input
+                    :min="now_date"
                     v-model="start_date"
                     class="input is-primary"
                     type="date"
@@ -89,6 +102,7 @@
                 <label class="label">End Date</label>
                 <div class="control is-expanded">
                   <input
+                    :min="start_date"
                     v-model="end_date"
                     class="input is-primary"
                     type="date"
@@ -163,12 +177,22 @@ export default {
     }
   },
   data() {
+    var date = new Date();
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+
+    var today = year + "-" + month + "-" + day;
     return {
       amount: null,
       recipient: null,
       start_date: null,
       start_time: null,
       end_date: null,
+      now_date: today,
       end_time: null,
       loading: false,
       error: null,
@@ -176,7 +200,64 @@ export default {
       explorer: process.env.NUXT_ENV_BLOCKEXPLORER
     };
   },
+  watch: {
+    start_date(newValue, oldValue) {
+      var date = new Date();
+      var day = date.getDate();
+      var month = date.getMonth() + 1;
+      var year = date.getFullYear();
 
+      if (month < 10) month = "0" + month;
+      if (day < 10) day = "0" + day;
+
+      var today = year + "-" + month + "-" + day;
+      if (new Date(newValue) < date) {
+        this.start_date = today;
+      }
+      const startDate = new Date(this.start_date);
+      date.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      if (date.getTime() === startDate.getTime()) {
+        this.start_time = null;
+      }
+    },
+    start_time(newValue, oldValue) {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const startDate = new Date(this.start_date);
+      now.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      if (now.getTime() === startDate.getTime()) {
+        if (!newValue) {
+          this.start_time = hours + ":" + (minutes + 2);
+        } else {
+          const parts = newValue.split(":");
+          if (
+            parseInt(parts[0]) < hours ||
+            (parseInt(parts[0]) === hours && parseInt(parts[1]) < minutes + 2)
+          ) {
+            this.start_time = hours + ":" + (minutes + 2);
+          }
+        }
+      }
+    },
+    end_time(newValue, oldValue) {
+      if (this.start_date === this.end_date) {
+        if (this.start_time && newValue) {
+          const partsStart = this.start_time.split(":");
+          const partsEnd = newValue.split(":");
+          if (
+            parseInt(partsEnd[0]) < parseInt(partsStart[0]) ||
+            (parseInt(partsEnd[0]) === parseInt(partsStart[0]) &&
+              parseInt(partsEnd[1]) < parseInt(partsStart[1]) + 5)
+          ) {
+            this.end_time = partsStart[0] + ":" + (parseInt(partsStart[1]) + 5);
+          }
+        }
+      }
+    }
+  },
   methods: {
     handleError(error) {
       console.error(error);
@@ -212,15 +293,12 @@ export default {
          * @param {BN} cliff - Vesting contract "cliff" timestamp
          * @param {BN} cliffAmount - Amount unlocked at the "cliff" timestamp
          */
-        console.log(this.start_date, this.start_time);
         const start =
           new Date(this.start_date + "T" + this.start_time).getTime() / 1e3;
         let end = new Date(this.end_date + "T" + this.end_time).getTime() / 1e3;
         if (end === start) {
           end = start + 1;
         }
-        console.log("START", start);
-        console.log("END", end);
         const escrow = Keypair.generate();
         const amount = new BN(this.amount * Math.pow(10, 6));
         const mint = new PublicKey(process.env.NUXT_ENV_TOKEN_ADDRESS);
@@ -252,7 +330,11 @@ export default {
   }
 };
 </script>
-
+<style>
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+</style>
 <style lang="scss" scoped>
 .bg-dark {
   background-image: url("~assets/img/bg.jpg");
