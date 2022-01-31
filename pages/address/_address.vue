@@ -339,6 +339,7 @@ export default {
       // eslint-disable-next-line
       this.refreshReleasable;
       if (this.vesting) {
+        console.log(this.vesting.start_time.toString());
         return this.calculateReleasable(
           this.vesting.start_time,
           this.vesting.end_time,
@@ -375,7 +376,7 @@ export default {
         ((+total - +cliff) * (now.getTime() / 1000 - start)) / duration -
         +released +
         +cliff;
-      return Math.min(+total - +released, releasable);
+      return Math.max(0, Math.min(+total - +released, releasable));
     },
     handleError(error) {
       console.error(error);
