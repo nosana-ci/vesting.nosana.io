@@ -65,10 +65,10 @@ export default (context, inject) => {
 
       onWalletChange(_accountInfo) {
         this.wallet = wallet
-
-        if (typeof _accountInfo.lamports === 'number') {
-          this.balance = _accountInfo.lamports
-        }
+        this.getBalance()
+        // if (typeof _accountInfo.lamports === 'number') {
+        //   this.balance = _accountInfo.lamports
+        // }
       },
 
       subWallet() {

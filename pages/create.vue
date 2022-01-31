@@ -89,6 +89,7 @@
                 <div class="control is-expanded">
                   <input
                     v-model="start_time"
+                    :disabled="!start_date"
                     class="input is-primary"
                     type="time"
                   />
@@ -103,6 +104,7 @@
                 <div class="control is-expanded">
                   <input
                     :min="start_date"
+                    :disabled="!start_date"
                     v-model="end_date"
                     class="input is-primary"
                     type="date"
@@ -113,6 +115,7 @@
                 <label class="label">End Time</label>
                 <div class="control is-expanded">
                   <input
+                    :disabled="!start_date || !start_time || !end_date"
                     v-model="end_time"
                     class="input is-primary"
                     type="time"
@@ -121,12 +124,45 @@
               </div>
             </div>
           </div>
-
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <div class="field">
+                <label class="label">Cliff Amount</label>
+                <div class="control is-expanded">
+                  <input
+                    required
+                    v-model="cliffAmount"
+                    class="input"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    :disabled="!amount"
+                    :max="amount"
+                    placeholder="Amount in NOS"
+                  />
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Release Frequency (seconds)</label>
+                <div class="control is-expanded">
+                  <input
+                    required
+                    v-model="releaseFrequency"
+                    class="input"
+                    type="number"
+                    step="1"
+                    min="1"
+                    placeholder="Release frequency in seconds"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="field">
             <div class="control">
               <button
                 v-if="!solWallet"
-                class="button is-medium is-accent is-fullwidth mt-5"
+                class="button is-medium is-accent is-fullwidth mt-5 is-outlined"
                 @click.prevent.stop="$sol.loginModal = true"
               >
                 <strong>Connect Wallet</strong>
@@ -188,6 +224,8 @@ export default {
     var today = year + "-" + month + "-" + day;
     return {
       amount: null,
+      cliffAmount: 0,
+      releaseFrequency: 1,
       recipient: null,
       start_date: null,
       start_time: null,
@@ -302,9 +340,9 @@ export default {
         const escrow = Keypair.generate();
         const amount = new BN(this.amount * Math.pow(10, 6));
         const mint = new PublicKey(process.env.NUXT_ENV_TOKEN_ADDRESS);
-        const period = 1;
+        const period = this.releaseFrequency;
         const cliff = start;
-        const cliff_amount = 0;
+        const cliff_amount = new BN(this.cliffAmount * Math.pow(10, 6));
 
         const response = await Timelock.create(
           this.$sol.web3,

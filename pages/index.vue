@@ -94,9 +94,9 @@
           No NOS vesting contracts found
         </div>
         <div v-if="vestings" class="mt-4">
-          <nuxt-link to="/create" class="button is-accent is-outlined"
+          <!-- <nuxt-link to="/create" class="button is-accent is-outlined"
             >Create Vesting Contract</nuxt-link
-          >
+          > -->
           <div class="mt-4">
             <a @click.prevent="reload" class="is-size-6 has-text-danger"
               >Use different address</a
