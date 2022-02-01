@@ -4,34 +4,17 @@
     <section class="section">
       <div class="container">
         <div class="has-text-centered block">
-          <a class="" href="https://nosana.io" target="_blank">
-            <img
-              :src="require('@/assets/img/logo.svg')"
-              width="175"
-              class="mb-4"
-            />
+          <a class href="https://nosana.io" target="_blank">
+            <img :src="require('@/assets/img/logo.svg')" width="175" class="mb-4" />
           </a>
         </div>
       </div>
     </section>
     <div class="container">
       <div
-        class="
-          box
-          is-horizontal-centered
-          has-limited-width
-          px-4
-          pb-6
-          pt-5
-          gradient-block
-          has-border-gradient has-radius
-        "
+        class="box is-horizontal-centered has-limited-width px-4 pb-6 pt-5 gradient-block has-border-gradient has-radius"
       >
-        <h2
-          class="title is-2 has-text-centered has-text-weight-medium mb-6 mt-3"
-        >
-          Vesting Contract
-        </h2>
+        <h2 class="title is-2 has-text-centered has-text-weight-medium mb-6 mt-3">Vesting Contract</h2>
         <form @submit.prevent="createVesting()">
           <label class="label">Amount</label>
 
@@ -52,9 +35,7 @@
               <a
                 class="button"
                 @click="amount = ($sol.balance / 1e6).toFixed(2)"
-              >
-                Max ({{ ($sol.balance / 1e6).toFixed(2) }} NOS)
-              </a>
+              >Max ({{ ($sol.balance / 1e6).toFixed(2) }} NOS)</a>
             </div>
           </div>
 
@@ -76,12 +57,7 @@
               <div class="field">
                 <label class="label">Start Date</label>
                 <div class="control is-expanded">
-                  <input
-                    :min="now_date"
-                    v-model="start_date"
-                    class="input is-primary"
-                    type="date"
-                  />
+                  <input :min="now_date" v-model="start_date" class="input is-primary" type="date" />
                 </div>
               </div>
               <div class="field">
@@ -182,10 +158,15 @@
         <div v-if="success" class="notification is-success mb-6">
           <button class="delete" @click="success = null" />
           Transaction sent:
-          <a :href="`${explorer}/tx/${success}`" class="is-size-7">{{
+          <a :href="`${explorer}/tx/${success}`" class="is-size-7">
+            {{
             success
-          }}</a>
+            }}
+          </a>
         </div>
+        <p class="has-text-centered mt-6">
+          <nuxt-link to="/create-bulk" class="button is-info">Bulk Vesting Form</nuxt-link>
+        </p>
       </div>
     </div>
   </div>
@@ -331,6 +312,8 @@ export default {
          * @param {BN} cliff - Vesting contract "cliff" timestamp
          * @param {BN} cliffAmount - Amount unlocked at the "cliff" timestamp
          */
+        console.log("TEST1", this.start_date);
+        console.log("TEST", this.start_time);
         const start =
           new Date(this.start_date + "T" + this.start_time).getTime() / 1e3;
         let end = new Date(this.end_date + "T" + this.end_time).getTime() / 1e3;
