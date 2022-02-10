@@ -80,8 +80,10 @@
               <div class="has-text-weight-bold subtitle mb-5">
                 Vesting Start Date
               </div>
+              
               <h2
-                class="title has-text-accent is-5 mb-1 has-text-weight-medium"
+                class="title has-text-accent is-5 mb-1 has-text-weight-medium has-tooltip-arrow has-tooltip-fade"
+                :data-tooltip="'UTC: ' + new Date(vesting.start_time * 1000).toUTCString()"
                 v-if="vesting && vesting.start_time"
               >
                 {{ new Date(vesting.start_time * 1000) | formatDate }}
@@ -106,6 +108,7 @@
               <h2
                 class="title has-text-accent is-5 mb-2 has-text-weight-medium"
                 v-if="vesting && vesting.end_time"
+                :data-tooltip="'UTC: ' + new Date(vesting.end_time * 1000).toUTCString()"
               >
                 {{ new Date(vesting.end_time * 1000) | formatDate }}
               </h2>
@@ -339,7 +342,6 @@ export default {
       // eslint-disable-next-line
       this.refreshReleasable;
       if (this.vesting) {
-        console.log(this.vesting.start_time.toString());
         return this.calculateReleasable(
           this.vesting.start_time,
           this.vesting.end_time,
@@ -368,7 +370,6 @@ export default {
   methods: {
     calculateReleasable(start, end, total, released, cliff, period) {
       const now = new Date();
-      console.log(now.getTime() / 1000, start)
       if (now.getTime() / 1000 < start) return 0;
       const locked = (now.getTime() / 1000) % this.vesting.period;
       now.setSeconds(now.getSeconds() - locked);

@@ -54,7 +54,9 @@
           <div v-if="active === index">
             <ul class="columns is-multiline mt-1">
               <li class="column is-6 py-0">start: {{vesting.start_date}} {{vesting.start_time}}</li>
+              <li class="column is-6 py-0">start UTC: {{new Date(vesting.start_date + "T" + vesting.start_time).toUTCString()}}</li>
               <li class="column is-6 py-0">end: {{vesting.end_date}} {{vesting.end_time}}</li>
+              <li class="column is-6 py-0">end UTC: {{new Date(vesting.end_date + "T" + vesting.end_time).toUTCString()}}</li>
               <li class="column is-6 py-0">cliff amount: {{vesting.cliffAmount}} NOS</li>
               <li class="column is-6 py-0">release frequence: {{vesting.releaseFrequency}} second(s)</li>
             </ul>
