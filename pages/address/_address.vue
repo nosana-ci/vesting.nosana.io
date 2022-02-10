@@ -368,7 +368,8 @@ export default {
   methods: {
     calculateReleasable(start, end, total, released, cliff, period) {
       const now = new Date();
-      if (now < start) return 0;
+      console.log(now.getTime() / 1000, start)
+      if (now.getTime() / 1000 < start) return 0;
       const locked = (now.getTime() / 1000) % this.vesting.period;
       now.setSeconds(now.getSeconds() - locked);
       const duration = end - start;
