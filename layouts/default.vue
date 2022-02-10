@@ -4,6 +4,14 @@
       <sol-wallet />
     </client-only>
     <Nuxt />
+
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p class="is-flex is-justify-content-center">
+          Powered by <a class="ml-3" href="https://streamflow.finance" target="_blank"><img src="~assets/img/streamflow.png" /></a>
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
 

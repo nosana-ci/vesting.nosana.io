@@ -226,7 +226,7 @@
             </div>
           </div>
         </div>
-        <div class="mb-6">
+        <div class="mb-2">
           <div class="button is-medium is-danger is-fullwidth mt-5" disabled v-if="vesting && vesting.canceled_at.toNumber()">Cancelled</div>
           <div
             v-else-if="!solWallet"
@@ -259,7 +259,7 @@
             </form>
           </div>
         </div>
-        <div v-if="success" class="notification is-success mb-6">
+        <div v-if="success" class="notification is-success mb-2">
           <button class="delete" @click="success = null" />
           Transaction sent:
           <a :href="`${explorer}/tx/${success}`" class="is-size-7">{{
