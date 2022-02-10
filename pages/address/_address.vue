@@ -80,7 +80,6 @@
               <div class="has-text-weight-bold subtitle mb-5">
                 Vesting Start Date
               </div>
-              
               <h2
                 class="title has-text-accent is-5 mb-1 has-text-weight-medium has-tooltip-arrow has-tooltip-fade"
                 :data-tooltip="'UTC: ' + new Date(vesting.start_time * 1000).toUTCString()"
@@ -213,8 +212,9 @@
             >
               <div class="has-text-weight-bold subtitle mb-5">Claimable</div>
               <h2 class="title has-text-accent is-5 has-text-weight-medium">
+                <span class="has-text-danger" v-if="vesting && vesting.canceled_at.toNumber()">Cancelled</span>
                 <span
-                  v-if="
+                  v-else-if="
                     releasable !== null && typeof releasable !== 'undefined'
                   "
                 >
@@ -227,8 +227,9 @@
           </div>
         </div>
         <div class="mb-6">
+          <div class="button is-medium is-danger is-fullwidth mt-5" disabled v-if="vesting && vesting.canceled_at.toNumber()">Cancelled</div>
           <div
-            v-if="!solWallet"
+            v-else-if="!solWallet"
             class="button is-medium is-accent is-fullwidth mt-5"
             @click="$sol.loginModal = true"
           >
