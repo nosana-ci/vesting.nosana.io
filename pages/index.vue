@@ -60,9 +60,10 @@
             <strong>Find Vesting Contracts</strong>
           </button>
         </form>
+        <template v-for="(vesting, pubkey) in vestings">
         <div
-          v-for="(vesting, pubkey) in vestings"
           :key="pubkey"
+          v-if="!vesting.canceled_at.toNumber()"
           class="box is-info"
         >
           <nuxt-link
@@ -89,6 +90,7 @@
             </div>
           </nuxt-link>
         </div>
+        </template>
         <div v-if="loading">Loading..</div>
         <div v-else-if="vestings && !Object.keys(vestings).length">
           No NOS vesting contracts found
