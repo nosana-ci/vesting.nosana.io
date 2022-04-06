@@ -45,12 +45,13 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
+    '@nuxtjs/eslint-module'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
+    '@nuxtjs/axios'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -58,9 +59,10 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    extend(config, {}) {
+    // eslint-disable-next-line no-empty-pattern
+    extend (config, {}) {
       config.node = {
-          fs: 'empty'
+        fs: 'empty'
       }
     },
     transpile: [
@@ -89,6 +91,6 @@ export default {
     }
   },
   server: {
-    host: "0.0.0.0"
+    host: '0.0.0.0'
   }
 }

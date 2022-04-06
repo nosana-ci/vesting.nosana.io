@@ -9,7 +9,7 @@
               :src="require('@/assets/img/logo.svg')"
               width="175"
               class="mb-4"
-            />
+            >
           </a>
         </div>
       </div>
@@ -20,12 +20,15 @@
           <progress
             class="progress is-small is-secondary mb-3"
             max="100"
-          ></progress>
+          />
         </div>
         <div class="mb-3">
-          <nuxt-link to="/" class="has-text-white has-text-weight-light"
-            >&lt; back</nuxt-link
+          <nuxt-link
+            to="/"
+            class="has-text-white has-text-weight-light"
           >
+            &lt; back
+          </nuxt-link>
         </div>
         <div
           class="
@@ -40,29 +43,34 @@
             Claim Your Vested <span class="has-text-accent">NOS</span> Tokens
           </h2>
           <div v-if="!address">
-            <h3 class="subtitle has-text-danger">Invalid address</h3>
-            <nuxt-link to="/" class="button">Home</nuxt-link>
+            <h3 class="subtitle has-text-danger">
+              Invalid address
+            </h3>
+            <nuxt-link to="/" class="button">
+              Home
+            </nuxt-link>
           </div>
           <div v-else>
             <div class="has-text-weight-bold subtitle mb-1">
               Vesting Contract
             </div>
             <h3 v-if="address" class="subtitle blockchain-address">
-              <a :href="`${explorer}/address/${address}`" target="_blank"
-                >{{ address }} <i class="fas fa-external-link-alt"></i
-              ></a>
+              <a
+                :href="`${explorer}/address/${address}`"
+                target="_blank"
+              >{{ address }} <i class="fas fa-external-link-alt" /></a>
             </h3>
             <div class="has-text-weight-bold subtitle mb-1">
               Recipient Address
             </div>
             <h3 class="subtitle blockchain-address">
-              <span v-if="vesting && vesting.recipient !== null"
-                ><a
-                  :href="`${explorer}/address/${vesting.recipient}`"
-                  target="_blank"
-                  >{{ vesting.recipient }}
-                  <i class="fas fa-external-link-alt"></i></a></span
-              ><span v-else>...</span>
+              <span
+                v-if="vesting && vesting.recipient !== null"
+              ><a
+                :href="`${explorer}/address/${vesting.recipient}`"
+                target="_blank"
+              >{{ vesting.recipient }}
+                <i class="fas fa-external-link-alt" /></a></span><span v-else>...</span>
             </h3>
           </div>
         </div>
@@ -81,13 +89,15 @@
                 Vesting Start Date
               </div>
               <h2
+                v-if="vesting && vesting.start_time"
                 class="title has-text-accent is-5 mb-1 has-text-weight-medium has-tooltip-arrow has-tooltip-fade"
                 :data-tooltip="'UTC: ' + new Date(vesting.start_time * 1000).toUTCString()"
-                v-if="vesting && vesting.start_time"
               >
                 {{ new Date(vesting.start_time * 1000) | formatDate }}
               </h2>
-              <h2 v-else>...</h2>
+              <h2 v-else>
+                ...
+              </h2>
             </div>
           </div>
           <div class="column is-half">
@@ -105,13 +115,15 @@
                 Vesting End Date
               </div>
               <h2
-                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
                 v-if="vesting && vesting.end_time"
+                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
                 :data-tooltip="'UTC: ' + new Date(vesting.end_time * 1000).toUTCString()"
               >
                 {{ new Date(vesting.end_time * 1000) | formatDate }}
               </h2>
-              <h2 v-else>...</h2>
+              <h2 v-else>
+                ...
+              </h2>
             </div>
           </div>
           <div class="column is-half">
@@ -129,13 +141,15 @@
                 Unlocked at start time
               </div>
               <h2
-                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
                 v-if="vesting && vesting.cliff_amount !== null"
+                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
               >
                 {{ +(vesting.cliff_amount / 1000000) }}
               </h2>
-              <h2 v-else>...</h2>
-              <div class="is-size-7" v-if="vesting && vesting.cliff">
+              <h2 v-else>
+                ...
+              </h2>
+              <div v-if="vesting && vesting.cliff" class="is-size-7">
                 {{ new Date(vesting.cliff * 1000) | formatDate }}
               </div>
             </div>
@@ -151,10 +165,12 @@
               "
               style="height: 100%"
             >
-              <div class="has-text-weight-bold subtitle mb-5">Release rate</div>
+              <div class="has-text-weight-bold subtitle mb-5">
+                Release rate
+              </div>
               <h2
-                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
                 v-if="vesting && vesting.period && vesting.total_amount"
+                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
               >
                 {{
                   +(
@@ -165,8 +181,10 @@
                 }}
                 NOS per {{ vesting.period }}s
               </h2>
-              <h2 v-else>...</h2>
-              <div class="is-size-7" v-if="vesting && vesting.period">
+              <h2 v-else>
+                ...
+              </h2>
+              <div v-if="vesting && vesting.period" class="is-size-7">
                 Next unlock {{ nextUnlock }}s
               </div>
             </div>
@@ -188,14 +206,13 @@
                 <span
                   v-if="
                     vesting &&
-                    vesting.withdrawn_amount !== null &&
-                    typeof vesting.withdrawn_amount !== 'undefined' &&
-                    vesting.total_amount
+                      vesting.withdrawn_amount !== null &&
+                      typeof vesting.withdrawn_amount !== 'undefined' &&
+                      vesting.total_amount
                   "
-                  >{{ +(vesting.withdrawn_amount / 1000000) }} /
+                >{{ +(vesting.withdrawn_amount / 1000000) }} /
                   {{ +(vesting.total_amount / 1000000) }}
-                  <span class="has-text-weight-light">NOS</span></span
-                >
+                  <span class="has-text-weight-light">NOS</span></span>
                 <span v-else>...</span>
               </h2>
             </div>
@@ -210,9 +227,11 @@
                 has-radius has-text-centered
               "
             >
-              <div class="has-text-weight-bold subtitle mb-5">Claimable</div>
+              <div class="has-text-weight-bold subtitle mb-5">
+                Claimable
+              </div>
               <h2 class="title has-text-accent is-5 has-text-weight-medium">
-                <span class="has-text-danger" v-if="vesting && vesting.canceled_at.toNumber()">Cancelled</span>
+                <span v-if="vesting && vesting.canceled_at.toNumber()" class="has-text-danger">Cancelled</span>
                 <span
                   v-else-if="
                     releasable !== null && typeof releasable !== 'undefined'
@@ -227,7 +246,9 @@
           </div>
         </div>
         <div class="mb-2">
-          <div class="button is-medium is-danger is-fullwidth mt-5" disabled v-if="vesting && vesting.canceled_at.toNumber()">Cancelled</div>
+          <div v-if="vesting && vesting.canceled_at.toNumber()" class="button is-medium is-danger is-fullwidth mt-5" disabled>
+            Cancelled
+          </div>
           <div
             v-else-if="!solWallet"
             class="button is-medium is-accent is-fullwidth mt-5"
@@ -242,19 +263,20 @@
                 :class="{ 'is-loading': loading }"
                 :disabled="
                   loading ||
-                  !address ||
-                  !solWallet ||
-                  !releasable ||
-                  releasable < 10000
+                    !address ||
+                    !solWallet ||
+                    !releasable ||
+                    releasable < 10000
                 "
                 type="submit"
               >
                 <strong>Claim NOS Tokens</strong>
               </button>
               <div class="has-text-centered mt-2">
-                <a @click="$sol.logout" class="is-size-6 has-text-danger"
-                  >Logout</a
-                >
+                <a
+                  class="is-size-6 has-text-danger"
+                  @click="$sol.logout"
+                >Logout</a>
               </div>
             </form>
           </div>
@@ -278,20 +300,34 @@
 </template>
 
 <script>
-const Layout = require("@streamflow/timelock/dist/layout");
-import Timelock from "@streamflow/timelock";
-import ErrorModal from "@/components/ErrorModal";
-import { PublicKey } from "@solana/web3.js";
+import Timelock from '@streamflow/timelock'
+import { PublicKey } from '@solana/web3.js'
 import {
-  Address,
   BN
-} from "@streamflow/timelock/node_modules/@project-serum/anchor";
+} from '@streamflow/timelock/node_modules/@project-serum/anchor'
+import ErrorModal from '@/components/ErrorModal'
+const Layout = require('@streamflow/timelock/dist/layout')
 
 export default {
   components: {
     ErrorModal
   },
-  data() {
+
+  filters: {
+    formatDate (value) {
+      if (value) {
+        const year = value.getFullYear()
+        const month = value.toLocaleString('default', { month: 'long' })
+        const day = value.getDate()
+        // const seconds = value.getSeconds()
+        const minutes = value.getMinutes()
+        const hour = value.getHours()
+        return `${month} ${day} ${year} - ${hour}:${(minutes < 10 ? '0' : '') +
+          minutes}`
+      }
+    }
+  },
+  data () {
     return {
       address: this.$route.params.address,
       error: null,
@@ -300,46 +336,16 @@ export default {
       refreshReleasable: true,
       explorer: process.env.NUXT_ENV_BLOCKEXPLORER,
       vesting: null
-    };
-  },
-
-  created() {
-    if (!this.address) {
-      this.error = "Invalid address";
-    } else {
-      this.timer = setInterval(() => {
-        this.refreshReleasable = !this.refreshReleasable;
-      }, 1000);
-      this.getVestingInfo();
     }
-  },
-
-  filters: {
-    formatDate(value) {
-      if (value) {
-        const year = value.getFullYear();
-        const month = value.toLocaleString("default", { month: "long" });
-        const day = value.getDate();
-        const seconds = value.getSeconds();
-        const minutes = value.getMinutes();
-        const hour = value.getHours();
-        return `${month} ${day} ${year} - ${hour}:${(minutes < 10 ? "0" : "") +
-          minutes}`;
-      }
-    }
-  },
-
-  beforeDestroy() {
-    clearInterval(this.timer);
   },
 
   computed: {
-    solWallet() {
+    solWallet () {
       return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
         ? this.$sol.wallet.publicKey.toString()
-        : null;
+        : null
     },
-    releasable() {
+    releasable () {
       // eslint-disable-next-line
       this.refreshReleasable;
       if (this.vesting) {
@@ -350,85 +356,100 @@ export default {
           this.vesting.withdrawn_amount,
           this.vesting.cliff_amount,
           this.vesting.period
-        );
+        )
       }
-      return null;
+      return null
     },
-    nextUnlock() {
+    nextUnlock () {
       // eslint-disable-next-line
       this.refreshReleasable;
       if (this.vesting) {
-        const now = new Date();
+        const now = new Date()
         return (
           this.vesting.period -
           parseInt((now.getTime() / 1000) % this.vesting.period)
-        );
+        )
       }
-      return null;
+      return null
     }
   },
 
+  created () {
+    if (!this.address) {
+      this.error = 'Invalid address'
+    } else {
+      this.timer = setInterval(() => {
+        this.refreshReleasable = !this.refreshReleasable
+      }, 1000)
+      this.getVestingInfo()
+    }
+  },
+
+  beforeDestroy () {
+    clearInterval(this.timer)
+  },
+
   methods: {
-    calculateReleasable(start, end, total, released, cliff, period) {
-      const now = new Date();
-      if (now.getTime() / 1000 < start) return 0;
-      const locked = (now.getTime() / 1000) % this.vesting.period;
-      now.setSeconds(now.getSeconds() - locked);
-      const duration = end - start;
+    calculateReleasable (start, end, total, released, cliff, period) {
+      const now = new Date()
+      if (now.getTime() / 1000 < start) { return 0 }
+      const locked = (now.getTime() / 1000) % this.vesting.period
+      now.setSeconds(now.getSeconds() - locked)
+      const duration = end - start
       const releasable =
         ((+total - +cliff) * (now.getTime() / 1000 - start)) / duration -
         +released +
-        +cliff;
-      return Math.max(0, Math.min(+total - +released, releasable));
+        +cliff
+      return Math.max(0, Math.min(+total - +released, releasable))
     },
-    handleError(error) {
-      console.error(error);
+    handleError (error) {
+      console.error(error)
       if (error.response && error.response.data) {
         if (error.response.data.error) {
-          this.error = error.response.data.error;
+          this.error = error.response.data.error
         } else if (error.response.data.message) {
-          this.error = error.response.data.message;
+          this.error = error.response.data.message
         } else {
-          this.error = error.response.data;
+          this.error = error.response.data
         }
       } else if (error.message) {
-        this.error = error.message;
+        this.error = error.message
       } else {
-        this.error = error;
+        this.error = error
       }
     },
-    async claim() {
-      this.loading = true;
+    async claim () {
+      this.loading = true
       try {
         const response = await Timelock.withdraw(
           this.$sol.web3,
           this.$sol.wallet,
-          "8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX",
+          '8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX',
           new PublicKey(this.address),
           new BN(0)
-        );
-        this.success = response;
-        this.getVestingInfo();
+        )
+        this.success = response
+        this.getVestingInfo()
       } catch (e) {
-        alert("something went wrong");
-        this.handleError(e);
+        alert('something went wrong')
+        this.handleError(e)
       }
-      this.loading = false;
+      this.loading = false
     },
-    async getVestingInfo() {
-      this.loading = true;
+    async getVestingInfo () {
+      this.loading = true
       try {
         const response = await this.$sol.web3.getAccountInfo(
           new PublicKey(this.address)
-        );
-        this.vesting = Layout.decode(Buffer.from(response.data));
+        )
+        this.vesting = Layout.decode(Buffer.from(response.data))
       } catch (error) {
-        this.handleError(error);
+        this.handleError(error)
       }
-      this.loading = false;
+      this.loading = false
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
