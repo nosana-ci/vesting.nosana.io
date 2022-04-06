@@ -5,7 +5,7 @@
       <div class="container">
         <div class="has-text-centered block">
           <a class href="https://nosana.io" target="_blank">
-            <img :src="require('@/assets/img/logo.svg')" width="175" class="mb-4" />
+            <img :src="require('@/assets/img/logo.svg')" width="175" class="mb-4">
           </a>
         </div>
       </div>
@@ -14,22 +14,24 @@
       <div
         class="box is-horizontal-centered has-limited-width px-4 pb-6 pt-5 gradient-block has-border-gradient has-radius"
       >
-        <h2 class="title is-2 has-text-centered has-text-weight-medium mb-6 mt-3">Vesting Contract</h2>
+        <h2 class="title is-2 has-text-centered has-text-weight-medium mb-6 mt-3">
+          Vesting Contract
+        </h2>
         <form @submit.prevent="createVesting()">
           <label class="label">Amount</label>
 
           <div class="field has-addons">
             <div class="control is-expanded">
               <input
-                required
                 v-model="amount"
+                required
                 class="input"
                 type="number"
                 step="0.01"
                 min="0"
                 :max="$sol.balance / 1e6"
                 placeholder="Amount in NOS"
-              />
+              >
             </div>
             <div class="control">
               <a
@@ -43,12 +45,12 @@
             <label class="label">Recipient Address</label>
             <div class="control">
               <input
-                required
                 v-model="recipient"
+                required
                 class="input is-primary"
                 type="text"
                 placeholder="Solana Address"
-              />
+              >
             </div>
           </div>
 
@@ -57,7 +59,7 @@
               <div class="field">
                 <label class="label">Start Date</label>
                 <div class="control is-expanded">
-                  <input :min="now_date" v-model="start_date" class="input is-primary" type="date" />
+                  <input v-model="start_date" :min="now_date" class="input is-primary" type="date">
                 </div>
               </div>
               <div class="field">
@@ -68,7 +70,7 @@
                     :disabled="!start_date"
                     class="input is-primary"
                     type="time"
-                  />
+                  >
                 </div>
               </div>
             </div>
@@ -79,23 +81,23 @@
                 <label class="label">End Date</label>
                 <div class="control is-expanded">
                   <input
+                    v-model="end_date"
                     :min="start_date"
                     :disabled="!start_date"
-                    v-model="end_date"
                     class="input is-primary"
                     type="date"
-                  />
+                  >
                 </div>
               </div>
               <div class="field">
                 <label class="label">End Time</label>
                 <div class="control is-expanded">
                   <input
-                    :disabled="!start_date || !start_time || !end_date"
                     v-model="end_time"
+                    :disabled="!start_date || !start_time || !end_date"
                     class="input is-primary"
                     type="time"
-                  />
+                  >
                 </div>
               </div>
             </div>
@@ -106,8 +108,8 @@
                 <label class="label">Cliff Amount</label>
                 <div class="control is-expanded">
                   <input
-                    required
                     v-model="cliffAmount"
+                    required
                     class="input"
                     type="number"
                     step="0.01"
@@ -115,21 +117,21 @@
                     :disabled="!amount"
                     :max="amount"
                     placeholder="Amount in NOS"
-                  />
+                  >
                 </div>
               </div>
               <div class="field">
                 <label class="label">Release Frequency (seconds)</label>
                 <div class="control is-expanded">
                   <input
-                    required
                     v-model="releaseFrequency"
+                    required
                     class="input"
                     type="number"
                     step="1"
                     min="1"
                     placeholder="Release frequency in seconds"
-                  />
+                  >
                 </div>
               </div>
             </div>
@@ -160,12 +162,14 @@
           Transaction sent:
           <a :href="`${explorer}/tx/${success}`" class="is-size-7">
             {{
-            success
+              success
             }}
           </a>
         </div>
         <p class="has-text-centered mt-6">
-          <nuxt-link to="/create-bulk" class="button is-info">Bulk Vesting Form</nuxt-link>
+          <nuxt-link to="/create-bulk" class="button is-info">
+            Bulk Vesting Form
+          </nuxt-link>
         </p>
       </div>
     </div>
@@ -173,36 +177,27 @@
 </template>
 
 <script>
-import { PublicKey, Keypair } from "@solana/web3.js";
-import Timelock from "@streamflow/timelock";
-import ErrorModal from "@/components/ErrorModal";
+import { PublicKey, Keypair } from '@solana/web3.js'
+import Timelock from '@streamflow/timelock'
 import {
-  Address,
   BN
-} from "@streamflow/timelock/node_modules/@project-serum/anchor";
+} from '@streamflow/timelock/node_modules/@project-serum/anchor'
+import ErrorModal from '@/components/ErrorModal'
 
 export default {
   components: {
     ErrorModal
   },
-  created() {},
-  computed: {
-    solWallet() {
-      return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
-        ? this.$sol.wallet.publicKey.toString()
-        : null;
-    }
-  },
-  data() {
-    var date = new Date();
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
+  data () {
+    const date = new Date()
+    let day = date.getDate()
+    let month = date.getMonth() + 1
+    const year = date.getFullYear()
 
-    if (month < 10) month = "0" + month;
-    if (day < 10) day = "0" + day;
+    if (month < 10) { month = '0' + month }
+    if (day < 10) { day = '0' + day }
 
-    var today = year + "-" + month + "-" + day;
+    const today = year + '-' + month + '-' + day
     return {
       amount: null,
       cliffAmount: 0,
@@ -217,85 +212,93 @@ export default {
       error: null,
       success: null,
       explorer: process.env.NUXT_ENV_BLOCKEXPLORER
-    };
+    }
+  },
+  computed: {
+    solWallet () {
+      return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
+        ? this.$sol.wallet.publicKey.toString()
+        : null
+    }
   },
   watch: {
-    start_date(newValue, oldValue) {
-      var date = new Date();
-      var day = date.getDate();
-      var month = date.getMonth() + 1;
-      var year = date.getFullYear();
+    start_date (newValue, oldValue) {
+      const date = new Date()
+      let day = date.getDate()
+      let month = date.getMonth() + 1
+      const year = date.getFullYear()
 
-      if (month < 10) month = "0" + month;
-      if (day < 10) day = "0" + day;
+      if (month < 10) { month = '0' + month }
+      if (day < 10) { day = '0' + day }
 
-      var today = year + "-" + month + "-" + day;
+      const today = year + '-' + month + '-' + day
       if (new Date(newValue) < date) {
-        this.start_date = today;
+        this.start_date = today
       }
-      const startDate = new Date(this.start_date);
-      date.setHours(0, 0, 0, 0);
-      startDate.setHours(0, 0, 0, 0);
+      const startDate = new Date(this.start_date)
+      date.setHours(0, 0, 0, 0)
+      startDate.setHours(0, 0, 0, 0)
       if (date.getTime() === startDate.getTime()) {
-        this.start_time = null;
+        this.start_time = null
       }
     },
-    start_time(newValue, oldValue) {
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const startDate = new Date(this.start_date);
-      now.setHours(0, 0, 0, 0);
-      startDate.setHours(0, 0, 0, 0);
+    start_time (newValue, oldValue) {
+      const now = new Date()
+      const hours = now.getHours()
+      const minutes = now.getMinutes()
+      const startDate = new Date(this.start_date)
+      now.setHours(0, 0, 0, 0)
+      startDate.setHours(0, 0, 0, 0)
       if (now.getTime() === startDate.getTime()) {
         if (!newValue) {
-          this.start_time = hours + ":" + (minutes + 2);
+          this.start_time = hours + ':' + (minutes + 2)
         } else {
-          const parts = newValue.split(":");
+          const parts = newValue.split(':')
           if (
             parseInt(parts[0]) < hours ||
             (parseInt(parts[0]) === hours && parseInt(parts[1]) < minutes + 2)
           ) {
-            this.start_time = hours + ":" + (minutes + 2);
+            this.start_time = hours + ':' + (minutes + 2)
           }
         }
       }
     },
-    end_time(newValue, oldValue) {
+    end_time (newValue, oldValue) {
       if (this.start_date === this.end_date) {
         if (this.start_time && newValue) {
-          const partsStart = this.start_time.split(":");
-          const partsEnd = newValue.split(":");
+          const partsStart = this.start_time.split(':')
+          const partsEnd = newValue.split(':')
           if (
             parseInt(partsEnd[0]) < parseInt(partsStart[0]) ||
             (parseInt(partsEnd[0]) === parseInt(partsStart[0]) &&
               parseInt(partsEnd[1]) < parseInt(partsStart[1]) + 5)
           ) {
-            this.end_time = partsStart[0] + ":" + (parseInt(partsStart[1]) + 5);
+            this.end_time = partsStart[0] + ':' + (parseInt(partsStart[1]) + 5)
           }
         }
       }
     }
   },
+  created () {},
   methods: {
-    handleError(error) {
-      console.error(error);
+    handleError (error) {
+      console.error(error)
       if (error.response && error.response.data) {
         if (error.response.data.error) {
-          this.error = error.response.data.error;
+          this.error = error.response.data.error
         } else if (error.response.data.message) {
-          this.error = error.response.data.message;
+          this.error = error.response.data.message
         } else {
-          this.error = error.response.data;
+          this.error = error.response.data
         }
       } else if (error.message) {
-        this.error = error.message;
+        this.error = error.message
       } else {
-        this.error = error;
+        this.error = error
       }
     },
-    async createVesting() {
-      this.loading = true;
+    async createVesting () {
+      this.loading = true
       try {
         /**
          * Creates a new stream/vesting contract. All fees are paid by sender. (escrow metadata account rent, escrow token account, recipient's associated token account creation
@@ -312,25 +315,23 @@ export default {
          * @param {BN} cliff - Vesting contract "cliff" timestamp
          * @param {BN} cliffAmount - Amount unlocked at the "cliff" timestamp
          */
-        console.log("TEST1", this.start_date);
-        console.log("TEST", this.start_time);
         const start =
-          new Date(this.start_date + "T" + this.start_time).getTime() / 1e3;
-        let end = new Date(this.end_date + "T" + this.end_time).getTime() / 1e3;
+          new Date(this.start_date + 'T' + this.start_time).getTime() / 1e3
+        let end = new Date(this.end_date + 'T' + this.end_time).getTime() / 1e3
         if (end === start) {
-          end = start + 1;
+          end = start + 1
         }
-        const escrow = Keypair.generate();
-        const amount = new BN(this.amount * Math.pow(10, 6));
-        const mint = new PublicKey(process.env.NUXT_ENV_TOKEN_ADDRESS);
-        const period = this.releaseFrequency;
-        const cliff = start;
-        const cliff_amount = new BN(this.cliffAmount * Math.pow(10, 6));
+        const escrow = Keypair.generate()
+        const amount = new BN(this.amount * Math.pow(10, 6))
+        const mint = new PublicKey(process.env.NUXT_ENV_TOKEN_ADDRESS)
+        const period = this.releaseFrequency
+        const cliff = start
+        const cliffAmount = new BN(this.cliffAmount * Math.pow(10, 6))
 
         const response = await Timelock.create(
           this.$sol.web3,
           this.$sol.wallet,
-          "8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX",
+          '8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX',
           escrow,
           new PublicKey(this.recipient),
           mint,
@@ -339,17 +340,17 @@ export default {
           new BN(end),
           new BN(period),
           new BN(cliff),
-          new BN(cliff_amount)
-        );
-        this.success = response;
+          new BN(cliffAmount)
+        )
+        this.success = response
       } catch (e) {
-        alert("something went wrong");
-        this.handleError(e);
+        alert('something went wrong')
+        this.handleError(e)
       }
-      this.loading = false;
+      this.loading = false
     }
   }
-};
+}
 </script>
 <style>
 ::-webkit-calendar-picker-indicator {

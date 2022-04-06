@@ -8,7 +8,7 @@
               :src="require('@/assets/img/logo.svg')"
               width="175"
               class="mb-4"
-            />
+            >
           </a>
         </div>
       </div>
@@ -38,11 +38,13 @@
           >
             <strong>Connect Wallet</strong>
           </div>
-          <h3 class="subtitle my-3">- OR -</h3>
+          <h3 class="subtitle my-3">
+            - OR -
+          </h3>
         </div>
         <form
-          @submit.prevent="retrieveVestingContracts(address)"
           v-if="!vestings"
+          @submit.prevent="retrieveVestingContracts(address)"
         >
           <input
             v-model="address"
@@ -50,7 +52,7 @@
             class="input is-medium is-primary is-transparent"
             required
             placeholder="SOL address"
-          />
+          >
           <button
             :disabled="loading"
             :class="{ 'is-disabled': loading }"
@@ -61,37 +63,39 @@
           </button>
         </form>
         <template v-for="(vesting, pubkey) in vestings">
-        <div
-          :key="pubkey"
-          v-if="!vesting.canceled_at.toNumber()"
-          class="box is-info"
-        >
-          <nuxt-link
-            :to="'/address/' + pubkey"
-            class="is-clickable is-flex is-flex-wrap-wrap is-align-items-center"
-            @click="active !== pubkey ? (step = pubkey) : (active = null)"
+          <div
+            v-if="!vesting.canceled_at.toNumber()"
+            :key="pubkey"
+            class="box is-info"
           >
-            <h3 class="subtitle m-0 is-6">
-              {{ +(vesting.withdrawn_amount / 1000000) }} /
-              {{ +(vesting.total_amount / 1000000) }}
-              <span class="has-text-accent">NOS</span>
-            </h3>
-            <div
-              class="is-size-7 has-overflow-ellipses mr-4"
-              style="margin-left: auto"
+            <nuxt-link
+              :to="'/address/' + pubkey"
+              class="is-clickable is-flex is-flex-wrap-wrap is-align-items-center"
+              @click="active !== pubkey ? (step = pubkey) : (active = null)"
             >
-              <span class="has-text-white">stream id</span> {{ pubkey }}
-            </div>
-            <div>
-              <i
-                class="fas fa-chevron-right"
-                :class="{ 'fa-chevron-up': active === pubkey }"
-              />
-            </div>
-          </nuxt-link>
-        </div>
+              <h3 class="subtitle m-0 is-6">
+                {{ +(vesting.withdrawn_amount / 1000000) }} /
+                {{ +(vesting.total_amount / 1000000) }}
+                <span class="has-text-accent">NOS</span>
+              </h3>
+              <div
+                class="is-size-7 has-overflow-ellipses mr-4"
+                style="margin-left: auto"
+              >
+                <span class="has-text-white">stream id</span> {{ pubkey }}
+              </div>
+              <div>
+                <i
+                  class="fas fa-chevron-right"
+                  :class="{ 'fa-chevron-up': active === pubkey }"
+                />
+              </div>
+            </nuxt-link>
+          </div>
         </template>
-        <div v-if="loading">Loading..</div>
+        <div v-if="loading">
+          Loading..
+        </div>
         <div v-else-if="vestings && !Object.keys(vestings).length">
           No NOS vesting contracts found
         </div>
@@ -100,9 +104,10 @@
             >Create Vesting Contract</nuxt-link
           > -->
           <div class="mt-4">
-            <a @click.prevent="reload" class="is-size-6 has-text-danger"
-              >Use different address</a
-            >
+            <a
+              class="is-size-6 has-text-danger"
+              @click.prevent="reload"
+            >Use different address</a>
           </div>
         </div>
       </div>
@@ -111,49 +116,49 @@
 </template>
 
 <script>
-import { PublicKey } from "@solana/web3.js";
-const Layout = require("@streamflow/timelock/dist/layout");
+import { PublicKey } from '@solana/web3.js'
+const Layout = require('@streamflow/timelock/dist/layout')
 
 export default {
   components: {},
-  created() {
-    if (this.solWallet) {
-      this.retrieveVestingContracts(this.solWallet);
-    }
-  },
-  computed: {
-    solWallet() {
-      return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
-        ? this.$sol.wallet.publicKey.toString()
-        : null;
-    }
-  },
-  watch: {
-    solWallet(publicKey) {
-      console.log("change", publicKey);
-      if (publicKey) {
-        this.retrieveVestingContracts(publicKey);
-      }
-    }
-  },
-  data() {
+  data () {
     return {
       address: null,
       loading: null,
       vestings: null,
       active: null
-    };
+    }
+  },
+  computed: {
+    solWallet () {
+      return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
+        ? this.$sol.wallet.publicKey.toString()
+        : null
+    }
+  },
+  watch: {
+    solWallet (publicKey) {
+      console.log('change', publicKey)
+      if (publicKey) {
+        this.retrieveVestingContracts(publicKey)
+      }
+    }
+  },
+  created () {
+    if (this.solWallet) {
+      this.retrieveVestingContracts(this.solWallet)
+    }
   },
 
   methods: {
-    reload() {
-      window.location.reload(true);
+    reload () {
+      window.location.reload(true)
     },
-    async retrieveVestingContracts(publicKey) {
-      this.loading = true;
+    async retrieveVestingContracts (publicKey) {
+      this.loading = true
       try {
         const response = await this.$sol.web3.getProgramAccounts(
-          new PublicKey("8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX"),
+          new PublicKey('8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX'),
           {
             filters: [
               {
@@ -164,23 +169,23 @@ export default {
               }
             ]
           }
-        );
-        let vestings = {};
+        )
+        const vestings = {}
         for (let i = 0; i < response.length; i++) {
-          const info = await this.$sol.web3.getAccountInfo(response[i].pubkey);
-          const decoded = Layout.decode(Buffer.from(info.data));
+          const info = await this.$sol.web3.getAccountInfo(response[i].pubkey)
+          const decoded = Layout.decode(Buffer.from(info.data))
           if (decoded.mint.toString() === process.env.NUXT_ENV_TOKEN_ADDRESS) {
-            vestings[response[i].pubkey.toString()] = decoded;
+            vestings[response[i].pubkey.toString()] = decoded
           }
         }
-        this.vestings = vestings;
+        this.vestings = vestings
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
-      this.loading = false;
+      this.loading = false
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

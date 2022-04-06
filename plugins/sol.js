@@ -7,7 +7,7 @@ import {
   SolflareWalletAdapter,
   SlopeWalletAdapter
 } from '@solana/wallet-adapter-wallets'
-import { clusterApiUrl, Connection, PublicKey } from '@solana/web3.js'
+import { Connection, PublicKey } from '@solana/web3.js'
 import { commitment, sendTransaction } from '@/utils/web3'
 
 const network = WalletAdapterNetwork.Mainnet
@@ -30,7 +30,7 @@ let wallet
 
 export default (context, inject) => {
   const sol = new Vue({
-    data() {
+    data () {
       return {
         explorer: process.env.NUXT_ENV_SOL_EXPLORER,
         balance: null,
@@ -42,11 +42,11 @@ export default (context, inject) => {
         error: null
       }
     },
-    created() {
+    created () {
 
     },
     methods: {
-      connect(adapter) {
+      connect (adapter) {
         if (adapter) {
           adapter.on('connect', this.onConnect)
           adapter.on('disconnect', this.onDisconnect)
@@ -63,7 +63,7 @@ export default (context, inject) => {
         }
       },
 
-      onWalletChange(_accountInfo) {
+      onWalletChange (_accountInfo) {
         this.wallet = wallet
         this.getBalance()
         // if (typeof _accountInfo.lamports === 'number') {
@@ -71,7 +71,7 @@ export default (context, inject) => {
         // }
       },
 
-      subWallet() {
+      subWallet () {
         if (wallet && wallet.publicKey) {
           this.walletListenerId = this.web3.onAccountChange(
             wallet.publicKey,
@@ -81,13 +81,13 @@ export default (context, inject) => {
         }
       },
 
-      unsubWallet() {
+      unsubWallet () {
         if (this.walletListenerId) {
           this.web3.removeAccountChangeListener(this.walletListenerId)
         }
       },
 
-      onConnect() {
+      onConnect () {
         const adapter = connectingAdapter
 
         if (adapter && adapter.publicKey) {
@@ -105,10 +105,10 @@ export default (context, inject) => {
           // }
         }
       },
-      onDisconnect() {
+      onDisconnect () {
         this.unsubWallet()
       },
-      onWalletError(error) {
+      onWalletError (error) {
         if (['WalletNotFoundError', 'WalletNotInstalledError', 'WalletNotReadyError'].includes(error.name)) {
           const name = error.name
             .replace('Error', '')
@@ -127,19 +127,19 @@ export default (context, inject) => {
         this.error = { name: 'Connect wallet failed', message: error.name }
       },
 
-      async getBalance() {
+      async getBalance () {
         if (wallet && wallet.connected) {
           // this.balance = await web3.getBalance(wallet.publicKey, commitment)
           this.balance = (await web3.getParsedTokenAccountsByOwner(
             wallet.publicKey,
             {
-              "mint": new PublicKey("nosXBVoaCTtYdLvKY6Csb4AC8JCdQKKAaWYtx2ZMoo7")
+              mint: new PublicKey('nosXBVoaCTtYdLvKY6Csb4AC8JCdQKKAaWYtx2ZMoo7')
             })).value[0].account.data.parsed.info.tokenAmount.amount
           console.log(this.balance)
         }
       },
 
-      async requestPayment({ to, lamports }) {
+      async requestPayment ({ to, lamports }) {
         if (wallet && wallet.connected) {
           const txid = await sendTransaction(web3, wallet, { destination: to, lamports })
           return txid
@@ -162,7 +162,7 @@ export default (context, inject) => {
         await connection.confirmTransaction(signature, 'processed'); */
       },
 
-      async logout() {
+      async logout () {
         if (connectingAdapter) {
           await connectingAdapter.disconnect()
           connectingAdapter = null
@@ -171,7 +171,7 @@ export default (context, inject) => {
         this.clear()
       },
 
-      clear() {
+      clear () {
         Object.assign(this.$data, this.$options.data.call(this))
       }
     }
