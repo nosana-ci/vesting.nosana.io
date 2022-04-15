@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="blur-background">
+      <img src="~assets/img/oval-green.png">
+      <img src="~assets/img/oval-yellow.png">
+    </div>
     <error-modal />
     <section class="section">
       <div class="container">
@@ -30,219 +34,254 @@
             &lt; back
           </nuxt-link>
         </div>
-        <div
-          class="
-            box
+        <atropos :options="{rotateTouch: false}" class="mb-5">
+          <div
+            class="
+            box mb-0
             has-background-black-transparent
             bg-dark
             p-6
             has-radius has-text-centered
           "
-        >
-          <h2 class="title is-3 mb-6 has-text-weight-medium">
-            Claim Your Vested <span class="has-text-accent">NOS</span> Tokens
-          </h2>
-          <div v-if="!address">
-            <h3 class="subtitle has-text-danger">
-              Invalid address
-            </h3>
-            <nuxt-link to="/" class="button">
-              Home
-            </nuxt-link>
-          </div>
-          <div v-else>
-            <div class="has-text-weight-bold subtitle mb-1">
-              Vesting Contract
+          >
+            <h2 class="title is-3 mb-6 has-text-weight-medium">
+              Claim Your Vested <span class="has-text-accent">NOS</span> Tokens
+            </h2>
+            <div v-if="!address">
+              <h3 class="subtitle has-text-danger">
+                Invalid address
+              </h3>
+              <nuxt-link to="/" class="button">
+                Home
+              </nuxt-link>
             </div>
-            <h3 v-if="address" class="subtitle blockchain-address">
-              <a
-                :href="`${explorer}/address/${address}`"
-                target="_blank"
-              >{{ address }} <i class="fas fa-external-link-alt" /></a>
-            </h3>
-            <div class="has-text-weight-bold subtitle mb-1">
-              Recipient Address
+            <div v-else>
+              <div class="has-text-weight-bold subtitle mb-1">
+                Vesting Contract
+              </div>
+              <h3 v-if="address" class="subtitle blockchain-address">
+                <a
+                  :href="`${explorer}/address/${address}`"
+                  target="_blank"
+                >{{ address }} <i class="fas fa-external-link-alt" /></a>
+              </h3>
+              <div class="has-text-weight-bold subtitle mb-1">
+                Recipient Address
+              </div>
+              <h3 class="subtitle blockchain-address">
+                <span
+                  v-if="vesting && vesting.recipient !== null"
+                ><a
+                  :href="`${explorer}/address/${vesting.recipient}`"
+                  target="_blank"
+                >{{ vesting.recipient }}
+                  <i class="fas fa-external-link-alt" /></a></span><span v-else>...</span>
+              </h3>
             </div>
-            <h3 class="subtitle blockchain-address">
-              <span
-                v-if="vesting && vesting.recipient !== null"
-              ><a
-                :href="`${explorer}/address/${vesting.recipient}`"
-                target="_blank"
-              >{{ vesting.recipient }}
-                <i class="fas fa-external-link-alt" /></a></span><span v-else>...</span>
-            </h3>
           </div>
-        </div>
+        </atropos>
         <div class="columns is-multiline">
           <div class="column is-half">
-            <div
-              class="
-                box
+            <atropos :options="{rotateTouch: false}">
+              <div
+                class="
+                box mb-0
                 has-background-black-transparent
                 py-5
                 bg-dark
                 has-radius has-text-centered
               "
-            >
-              <div class="has-text-weight-bold subtitle mb-5">
-                Vesting Start Date
-              </div>
-              <h2
-                v-if="vesting && vesting.start_time"
-                class="title has-text-accent is-5 mb-1 has-text-weight-medium has-tooltip-arrow has-tooltip-fade"
-                :data-tooltip="'UTC: ' + new Date(vesting.start_time * 1000).toUTCString()"
               >
-                {{ new Date(vesting.start_time * 1000) | formatDate }}
-              </h2>
-              <h2 v-else>
-                ...
-              </h2>
-            </div>
+                <div class="has-text-weight-bold subtitle mb-5">
+                  Vesting Start Date
+                </div>
+                <h2
+                  v-if="vesting && vesting.start_time"
+                  class="title has-text-accent is-5 mb-1 has-text-weight-medium has-tooltip-arrow has-tooltip-fade"
+                  :data-tooltip="'UTC: ' + new Date(vesting.start_time * 1000).toUTCString()"
+                >
+                  {{ new Date(vesting.start_time * 1000) | formatDate }}
+                </h2>
+                <h2 v-else>
+                  ...
+                </h2>
+              </div>
+            </atropos>
           </div>
           <div class="column is-half">
-            <div
-              class="
-                box
+            <atropos :options="{rotateTouch: false}">
+              <div
+                class="
+                box mb-0
                 has-background-black-transparent
                 py-5
                 bg-dark
                 has-radius has-text-centered
               "
-              style="height: 100%"
-            >
-              <div class="has-text-weight-bold subtitle mb-5">
-                Vesting End Date
-              </div>
-              <h2
-                v-if="vesting && vesting.end_time"
-                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
-                :data-tooltip="'UTC: ' + new Date(vesting.end_time * 1000).toUTCString()"
+                style="height: 100%"
               >
-                {{ new Date(vesting.end_time * 1000) | formatDate }}
-              </h2>
-              <h2 v-else>
-                ...
-              </h2>
-            </div>
+                <div class="has-text-weight-bold subtitle mb-5">
+                  Vesting End Date
+                </div>
+                <h2
+                  v-if="vesting && vesting.end_time"
+                  class="title has-text-accent is-5 mb-2 has-text-weight-medium"
+                  :data-tooltip="'UTC: ' + new Date(vesting.end_time * 1000).toUTCString()"
+                >
+                  {{ new Date(vesting.end_time * 1000) | formatDate }}
+                </h2>
+                <h2 v-else>
+                  ...
+                </h2>
+              </div>
+            </atropos>
           </div>
           <div class="column is-half">
-            <div
-              class="
-                box
+            <atropos :options="{rotateTouch: false}">
+              <div
+                class="
+                box mb-0
                 has-background-black-transparent
                 py-5
                 bg-dark
                 has-radius has-text-centered
               "
-              style="height: 100%"
-            >
-              <div class="has-text-weight-bold subtitle mb-5">
-                Unlocked at start time
-              </div>
-              <h2
-                v-if="vesting && vesting.cliff_amount !== null"
-                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
+                style="height: 100%"
               >
-                {{ +(vesting.cliff_amount / 1000000) }}
-              </h2>
-              <h2 v-else>
-                ...
-              </h2>
-              <div v-if="vesting && vesting.cliff" class="is-size-7">
-                {{ new Date(vesting.cliff * 1000) | formatDate }}
+                <div class="has-text-weight-bold subtitle mb-5">
+                  Unlocked at start time
+                </div>
+                <h2
+                  v-if="vesting && vesting.cliff_amount !== null"
+                  class="title has-text-accent is-5 mb-2 has-text-weight-medium"
+                >
+                  {{ +(vesting.cliff_amount / 1000000) }}
+                </h2>
+                <h2 v-else>
+                  ...
+                </h2>
+                <div v-if="vesting && vesting.cliff" class="is-size-7">
+                  {{ new Date(vesting.cliff * 1000) | formatDate }}
+                </div>
               </div>
-            </div>
+            </atropos>
           </div>
           <div class="column is-half">
-            <div
-              class="
-                box
+            <atropos :options="{rotateTouch: false}">
+              <div
+                class="
+                box mb-0
                 has-background-black-transparent
                 py-5
                 bg-dark
                 has-radius has-text-centered
               "
-              style="height: 100%"
-            >
-              <div class="has-text-weight-bold subtitle mb-5">
-                Release rate
-              </div>
-              <h2
-                v-if="vesting && vesting.period && vesting.total_amount"
-                class="title has-text-accent is-5 mb-2 has-text-weight-medium"
+                style="height: 100%"
               >
-                {{
-                  +(
-                    (vesting.total_amount - vesting.cliff_amount) /
-                    ((vesting.end_time - vesting.start_time) / vesting.period) /
-                    1000000
-                  ).toFixed(6)
-                }}
-                NOS per {{ vesting.period }}s
-              </h2>
-              <h2 v-else>
-                ...
-              </h2>
-              <div v-if="vesting && vesting.period" class="is-size-7">
-                Next unlock {{ nextUnlock }}s
+                <div class="has-text-weight-bold subtitle mb-5">
+                  Release rate
+                </div>
+                <h2
+                  v-if="vesting && vesting.period && vesting.total_amount"
+                  class="title has-text-accent is-5 mb-2 has-text-weight-medium"
+                >
+                  {{
+                    +(
+                      (vesting.total_amount - vesting.cliff_amount) /
+                      ((vesting.end_time - vesting.start_time) / vesting.period) /
+                      1000000
+                    ).toFixed(6)
+                  }}
+                  NOS per {{ vesting.period }}s
+                </h2>
+                <h2 v-else>
+                  ...
+                </h2>
+                <div v-if="vesting && vesting.period" class="is-size-7">
+                  Next unlock {{ nextUnlock }}s
+                </div>
               </div>
-            </div>
+            </atropos>
           </div>
           <div class="column is-half">
-            <div
-              class="
-                box
+            <atropos :options="{rotateTouch: false}">
+              <div
+                class="
+                box mb-0
                 has-background-black-transparent
                 py-5
                 bg-dark
                 has-radius has-text-centered
               "
-            >
-              <div class="has-text-weight-bold subtitle mb-5">
-                Total Released
-              </div>
-              <h2 class="title has-text-accent is-5 has-text-weight-medium">
-                <span
+              >
+                <div class="has-text-weight-bold subtitle mb-5">
+                  Total Released
+                </div>
+                <h2 class="title has-text-accent is-5 has-text-weight-medium">
+                  <span
+                    v-if="
+                      vesting &&
+                        vesting.withdrawn_amount !== null &&
+                        typeof vesting.withdrawn_amount !== 'undefined' &&
+                        vesting.total_amount
+                    "
+                  >{{ +(vesting.withdrawn_amount / 1000000) }} /
+                    {{ +(vesting.total_amount / 1000000) }}
+                    <span class="has-text-weight-light">NOS</span></span>
+                  <span v-else>...</span>
+                </h2>
+                <progress
                   v-if="
                     vesting &&
                       vesting.withdrawn_amount !== null &&
                       typeof vesting.withdrawn_amount !== 'undefined' &&
                       vesting.total_amount
                   "
-                >{{ +(vesting.withdrawn_amount / 1000000) }} /
-                  {{ +(vesting.total_amount / 1000000) }}
-                  <span class="has-text-weight-light">NOS</span></span>
-                <span v-else>...</span>
-              </h2>
-            </div>
+                  style="margin:0;"
+                  class="progress is-accent"
+                  :value="vesting.withdrawn_amount"
+                  :max="vesting.total_amount"
+                />
+              </div>
+            </atropos>
           </div>
           <div class="column is-half">
-            <div
-              class="
-                box
+            <atropos :options="{rotateTouch: false}">
+              <div
+                class="
+                box mb-0
                 has-background-black-transparent
                 py-5
                 bg-dark
                 has-radius has-text-centered
               "
-            >
-              <div class="has-text-weight-bold subtitle mb-5">
-                Claimable
-              </div>
-              <h2 class="title has-text-accent is-5 has-text-weight-medium">
-                <span v-if="vesting && vesting.canceled_at.toNumber()" class="has-text-danger">Cancelled</span>
-                <span
-                  v-else-if="
-                    releasable !== null && typeof releasable !== 'undefined'
+              >
+                <div class="has-text-weight-bold subtitle mb-5">
+                  Claimable
+                </div>
+                <h2 class="title has-text-accent is-5 has-text-weight-medium">
+                  <span v-if="vesting && vesting.canceled_at.toNumber()" class="has-text-danger">Cancelled</span>
+                  <span
+                    v-else-if="
+                      releasable !== null && typeof releasable !== 'undefined'
+                    "
+                  >
+                    ~{{ +(releasable / 1000000).toFixed(2) }}
+                    <span class="has-text-weight-light">NOS</span>
+                  </span>
+                  <span v-else>...</span>
+                </h2>
+                <progress
+                  v-if="
+                    vesting && releasable !== null && typeof releasable !== 'undefined'
                   "
-                >
-                  ~{{ +(releasable / 1000000).toFixed(2) }}
-                  <span class="has-text-weight-light">NOS</span>
-                </span>
-                <span v-else>...</span>
-              </h2>
-            </div>
+                  style="margin:0;"
+                  class="progress is-accent"
+                  :value="(+releasable + +vesting.withdrawn_amount)"
+                  :max="vesting.total_amount"
+                />
+              </div>
+            </atropos>
           </div>
         </div>
         <div class="mb-2">
