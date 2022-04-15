@@ -282,19 +282,3 @@ export default {
   filter: invert(1);
 }
 </style>
-<style lang="scss" scoped>
-.bg-dark {
-  background-image: url("~assets/img/bg.jpg");
-  color: white;
-  .title,
-  .subtitle {
-    color: white;
-  }
-}
-.is-primary {
-  color: rgba(255, 255, 255, 0.8);
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.8);
-  }
-}
-</style>

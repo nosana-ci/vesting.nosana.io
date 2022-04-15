@@ -1,6 +1,10 @@
 <template>
   <div>
     <section class="section">
+      <div class="blur-background">
+        <img src="~assets/img/oval-green.png">
+        <img src="~assets/img/oval-yellow.png">
+      </div>
       <div class="container">
         <div class="has-text-centered block">
           <a class="" href="https://nosana.io" target="_blank">
@@ -73,9 +77,7 @@
                 {{ +(vesting.total_amount / 1000000) }}
                 <span class="has-text-accent">NOS</span>
               </h3>
-              <progress style="margin:0; margin-left: auto; width: 50%" class="progress is-accent" value="15" max="100">
-                15%
-              </progress>
+              <progress style="margin:0; margin-left: auto; width: 50%" class="progress is-accent" :value="vesting.withdrawn_amount" :max="vesting.total_amount" />
               <div class="ml-2">
                 <i
                   class="fas fa-chevron-right"
@@ -179,14 +181,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.bg-dark {
-  background-image: url("~assets/img/bg.jpg");
-  color: white;
-  .title,
-  .subtitle {
-    color: white;
-  }
-}
+
 .is-primary {
   color: rgba(255, 255, 255, 0.8);
   &::placeholder {
