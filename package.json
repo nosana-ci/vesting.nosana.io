@@ -19,6 +19,7 @@
     "@solana/wallet-adapter-wallets": "0.14.0",
     "@solana/web3.js": "^1.31.0",
     "@streamflow/timelock": "^0.3.2",
+    "atropos": "^1.0.2",
     "buffer-layout": "^1.2.2",
     "bulma": "^0.9.2",
     "bulma-tooltip": "^3.0.2",

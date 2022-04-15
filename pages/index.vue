@@ -63,35 +63,26 @@
           </button>
         </form>
         <template v-for="(vesting, pubkey) in vestings">
-          <div
-            v-if="!vesting.canceled_at.toNumber()"
-            :key="pubkey"
-            class="box is-info"
-          >
+          <atropos v-if="!vesting.canceled_at.toNumber()" :key="pubkey" :options="{rotateTouch: false}" class="mb-4">
             <nuxt-link
               :to="'/address/' + pubkey"
-              class="is-clickable is-flex is-flex-wrap-wrap is-align-items-center"
-              @click="active !== pubkey ? (step = pubkey) : (active = null)"
+              class="mb-0 box is-info is-clickable is-flex is-align-items-center has-text-left"
             >
               <h3 class="subtitle m-0 is-6">
                 {{ +(vesting.withdrawn_amount / 1000000) }} /
                 {{ +(vesting.total_amount / 1000000) }}
                 <span class="has-text-accent">NOS</span>
               </h3>
-              <div
-                class="is-size-7 has-overflow-ellipses mr-4"
-                style="margin-left: auto"
-              >
-                <span class="has-text-white">stream id</span> {{ pubkey }}
-              </div>
-              <div>
+              <progress style="margin:0; margin-left: auto; width: 50%" class="progress is-accent" value="15" max="100">
+                15%
+              </progress>
+              <div class="ml-2">
                 <i
                   class="fas fa-chevron-right"
-                  :class="{ 'fa-chevron-up': active === pubkey }"
                 />
               </div>
             </nuxt-link>
-          </div>
+          </atropos>
         </template>
         <div v-if="loading">
           Loading..
@@ -125,8 +116,7 @@ export default {
     return {
       address: null,
       loading: null,
-      vestings: null,
-      active: null
+      vestings: null
     }
   },
   computed: {
