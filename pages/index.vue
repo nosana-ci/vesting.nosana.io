@@ -77,7 +77,12 @@
                 {{ +(vesting.total_amount / 1000000) }}
                 <span class="has-text-accent">NOS</span>
               </h3>
-              <progress style="margin:0; margin-left: auto; width: 50%" class="progress is-accent" :value="vesting.withdrawn_amount" :max="vesting.total_amount" />
+              <progress
+                style="margin:0; margin-left: auto; width: 50%"
+                class="progress is-accent"
+                :value="vesting.withdrawn_amount"
+                :max="vesting.total_amount"
+              />
               <div class="ml-2">
                 <i
                   class="fas fa-chevron-right"
@@ -109,8 +114,8 @@
 </template>
 
 <script>
-import { PublicKey } from '@solana/web3.js'
-const Layout = require('@streamflow/timelock/dist/layout')
+import { PublicKey } from '@solana/web3.js';
+const Layout = require('@streamflow/timelock/dist/layout');
 
 export default {
   components: {},
@@ -119,35 +124,35 @@ export default {
       address: null,
       loading: null,
       vestings: null
-    }
+    };
   },
   computed: {
     solWallet () {
       return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
         ? this.$sol.wallet.publicKey.toString()
-        : null
+        : null;
     }
   },
   watch: {
     solWallet (publicKey) {
-      console.log('change', publicKey)
+      console.log('change', publicKey);
       if (publicKey) {
-        this.retrieveVestingContracts(publicKey)
+        this.retrieveVestingContracts(publicKey);
       }
     }
   },
   created () {
     if (this.solWallet) {
-      this.retrieveVestingContracts(this.solWallet)
+      this.retrieveVestingContracts(this.solWallet);
     }
   },
 
   methods: {
     reload () {
-      window.location.reload(true)
+      window.location.reload(true);
     },
     async retrieveVestingContracts (publicKey) {
-      this.loading = true
+      this.loading = true;
       try {
         const response = await this.$sol.web3.getProgramAccounts(
           new PublicKey('8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX'),
@@ -161,23 +166,23 @@ export default {
               }
             ]
           }
-        )
-        const vestings = {}
+        );
+        const vestings = {};
         for (let i = 0; i < response.length; i++) {
-          const info = await this.$sol.web3.getAccountInfo(response[i].pubkey)
-          const decoded = Layout.decode(Buffer.from(info.data))
+          const info = await this.$sol.web3.getAccountInfo(response[i].pubkey);
+          const decoded = Layout.decode(Buffer.from(info.data));
           if (decoded.mint.toString() === process.env.NUXT_ENV_TOKEN_ADDRESS) {
-            vestings[response[i].pubkey.toString()] = decoded
+            vestings[response[i].pubkey.toString()] = decoded;
           }
         }
-        this.vestings = vestings
+        this.vestings = vestings;
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
-      this.loading = false
+      this.loading = false;
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

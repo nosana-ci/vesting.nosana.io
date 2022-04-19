@@ -285,7 +285,11 @@
           </div>
         </div>
         <div class="mb-2">
-          <div v-if="vesting && vesting.canceled_at.toNumber()" class="button is-medium is-danger is-fullwidth mt-5" disabled>
+          <div
+            v-if="vesting && vesting.canceled_at.toNumber()"
+            class="button is-medium is-danger is-fullwidth mt-5"
+            disabled
+          >
             Cancelled
           </div>
           <div
@@ -339,13 +343,13 @@
 </template>
 
 <script>
-import Timelock from '@streamflow/timelock'
-import { PublicKey } from '@solana/web3.js'
+import Timelock from '@streamflow/timelock';
+import { PublicKey } from '@solana/web3.js';
 import {
   BN
-} from '@streamflow/timelock/node_modules/@project-serum/anchor'
-import ErrorModal from '@/components/ErrorModal'
-const Layout = require('@streamflow/timelock/dist/layout')
+} from '@streamflow/timelock/node_modules/@project-serum/anchor';
+import ErrorModal from '@/components/ErrorModal';
+const Layout = require('@streamflow/timelock/dist/layout');
 
 export default {
   components: {
@@ -355,14 +359,14 @@ export default {
   filters: {
     formatDate (value) {
       if (value) {
-        const year = value.getFullYear()
-        const month = value.toLocaleString('default', { month: 'long' })
-        const day = value.getDate()
+        const year = value.getFullYear();
+        const month = value.toLocaleString('default', { month: 'long' });
+        const day = value.getDate();
         // const seconds = value.getSeconds()
-        const minutes = value.getMinutes()
-        const hour = value.getHours()
+        const minutes = value.getMinutes();
+        const hour = value.getHours();
         return `${month} ${day} ${year} - ${hour}:${(minutes < 10 ? '0' : '') +
-          minutes}`
+          minutes}`;
       }
     }
   },
@@ -375,14 +379,14 @@ export default {
       refreshReleasable: true,
       explorer: process.env.NUXT_ENV_BLOCKEXPLORER,
       vesting: null
-    }
+    };
   },
 
   computed: {
     solWallet () {
       return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
         ? this.$sol.wallet.publicKey.toString()
-        : null
+        : null;
     },
     releasable () {
       // eslint-disable-next-line
@@ -395,70 +399,70 @@ export default {
           this.vesting.withdrawn_amount,
           this.vesting.cliff_amount,
           this.vesting.period
-        )
+        );
       }
-      return null
+      return null;
     },
     nextUnlock () {
       // eslint-disable-next-line
       this.refreshReleasable;
       if (this.vesting) {
-        const now = new Date()
+        const now = new Date();
         return (
           this.vesting.period -
           parseInt((now.getTime() / 1000) % this.vesting.period)
-        )
+        );
       }
-      return null
+      return null;
     }
   },
 
   created () {
     if (!this.address) {
-      this.error = 'Invalid address'
+      this.error = 'Invalid address';
     } else {
       this.timer = setInterval(() => {
-        this.refreshReleasable = !this.refreshReleasable
-      }, 1000)
-      this.getVestingInfo()
+        this.refreshReleasable = !this.refreshReleasable;
+      }, 1000);
+      this.getVestingInfo();
     }
   },
 
   beforeDestroy () {
-    clearInterval(this.timer)
+    clearInterval(this.timer);
   },
 
   methods: {
     calculateReleasable (start, end, total, released, cliff, period) {
-      const now = new Date()
-      if (now.getTime() / 1000 < start) { return 0 }
-      const locked = (now.getTime() / 1000) % this.vesting.period
-      now.setSeconds(now.getSeconds() - locked)
-      const duration = end - start
+      const now = new Date();
+      if (now.getTime() / 1000 < start) { return 0; }
+      const locked = (now.getTime() / 1000) % this.vesting.period;
+      now.setSeconds(now.getSeconds() - locked);
+      const duration = end - start;
       const releasable =
         ((+total - +cliff) * (now.getTime() / 1000 - start)) / duration -
         +released +
-        +cliff
-      return Math.max(0, Math.min(+total - +released, releasable))
+        +cliff;
+      return Math.max(0, Math.min(+total - +released, releasable));
     },
     handleError (error) {
-      console.error(error)
+      console.error(error);
       if (error.response && error.response.data) {
         if (error.response.data.error) {
-          this.error = error.response.data.error
+          this.error = error.response.data.error;
         } else if (error.response.data.message) {
-          this.error = error.response.data.message
+          this.error = error.response.data.message;
         } else {
-          this.error = error.response.data
+          this.error = error.response.data;
         }
       } else if (error.message) {
-        this.error = error.message
+        this.error = error.message;
       } else {
-        this.error = error
+        this.error = error;
       }
     },
     async claim () {
-      this.loading = true
+      this.loading = true;
       try {
         const response = await Timelock.withdraw(
           this.$sol.web3,
@@ -466,29 +470,29 @@ export default {
           '8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX',
           new PublicKey(this.address),
           new BN(0)
-        )
-        this.success = response
-        this.getVestingInfo()
+        );
+        this.success = response;
+        this.getVestingInfo();
       } catch (e) {
-        alert('something went wrong')
-        this.handleError(e)
+        alert('something went wrong');
+        this.handleError(e);
       }
-      this.loading = false
+      this.loading = false;
     },
     async getVestingInfo () {
-      this.loading = true
+      this.loading = true;
       try {
         const response = await this.$sol.web3.getAccountInfo(
           new PublicKey(this.address)
-        )
-        this.vesting = Layout.decode(Buffer.from(response.data))
+        );
+        this.vesting = Layout.decode(Buffer.from(response.data));
       } catch (error) {
-        this.handleError(error)
+        this.handleError(error);
       }
-      this.loading = false
+      this.loading = false;
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

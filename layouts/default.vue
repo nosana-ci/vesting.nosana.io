@@ -16,13 +16,13 @@
 </template>
 
 <script>
-import SolWallet from '@/components/SolWallet'
+import SolWallet from '@/components/SolWallet';
 
 export default {
   components: {
     SolWallet
   }
-}
+};
 </script>
 
 <style lang="scss">

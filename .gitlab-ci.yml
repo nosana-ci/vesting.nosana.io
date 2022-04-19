@@ -1,3 +1,6 @@
 include:
   - project: nosana-ci/tools/cicd/gitlab-ci
-    file: nuxt.yml
+    file: npm-generic.yml
+
+variables:
+  NODE_VERSION: 14

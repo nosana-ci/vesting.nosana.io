@@ -1,20 +1,20 @@
-import Vue from 'vue'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import Vue from 'vue';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import {
   PhantomWalletAdapter,
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
   SolflareWalletAdapter,
   SlopeWalletAdapter
-} from '@solana/wallet-adapter-wallets'
-import { Connection, PublicKey } from '@solana/web3.js'
-import { commitment, sendTransaction } from '@/utils/web3'
+} from '@solana/wallet-adapter-wallets';
+import { Connection, PublicKey } from '@solana/web3.js';
+import { commitment, sendTransaction } from '@/utils/web3';
 
-const network = WalletAdapterNetwork.Mainnet
+const network = WalletAdapterNetwork.Mainnet;
 
 // You can also provide a custom RPC endpoint
-const endpoint = 'https://solana-api.projectserum.com' // clusterApiUrl(network)
-const web3 = new Connection(endpoint, 'confirmed')
+const endpoint = 'https://solana-api.projectserum.com'; // clusterApiUrl(network)
+const web3 = new Connection(endpoint, 'confirmed');
 
 // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking --
 // Only the wallets you configure here will be compiled into your application
@@ -24,9 +24,9 @@ const wallets = [
   new SolletWalletAdapter({ network }),
   new SolflareWalletAdapter(),
   new SlopeWalletAdapter()
-]
-let connectingAdapter
-let wallet
+];
+let connectingAdapter;
+let wallet;
 
 export default (context, inject) => {
   const sol = new Vue({
@@ -40,7 +40,7 @@ export default (context, inject) => {
         walletListenerId: null,
         wallets,
         error: null
-      }
+      };
     },
     created () {
 
@@ -48,24 +48,24 @@ export default (context, inject) => {
     methods: {
       connect (adapter) {
         if (adapter) {
-          adapter.on('connect', this.onConnect)
-          adapter.on('disconnect', this.onDisconnect)
-          adapter.on('error', this.onWalletError)
+          adapter.on('connect', this.onConnect);
+          adapter.on('disconnect', this.onDisconnect);
+          adapter.on('error', this.onWalletError);
 
-          connectingAdapter = adapter
-          adapter.connect()
+          connectingAdapter = adapter;
+          adapter.connect();
 
           return () => {
-            adapter.off('connect', this.onConnect)
-            adapter.off('disconnect', this.onDisconnect)
-            adapter.off('error', this.onWalletError)
-          }
+            adapter.off('connect', this.onConnect);
+            adapter.off('disconnect', this.onDisconnect);
+            adapter.off('error', this.onWalletError);
+          };
         }
       },
 
       onWalletChange (_accountInfo) {
-        this.wallet = wallet
-        this.getBalance()
+        this.wallet = wallet;
+        this.getBalance();
         // if (typeof _accountInfo.lamports === 'number') {
         //   this.balance = _accountInfo.lamports
         // }
@@ -77,27 +77,27 @@ export default (context, inject) => {
             wallet.publicKey,
             this.onWalletChange,
             commitment
-          )
+          );
         }
       },
 
       unsubWallet () {
         if (this.walletListenerId) {
-          this.web3.removeAccountChangeListener(this.walletListenerId)
+          this.web3.removeAccountChangeListener(this.walletListenerId);
         }
       },
 
       onConnect () {
-        const adapter = connectingAdapter
+        const adapter = connectingAdapter;
 
         if (adapter && adapter.publicKey) {
-          localStorage.setItem('WALLET_NAME', adapter.name)
-          wallet = adapter
-          this.subWallet()
-          this.getBalance()
+          localStorage.setItem('WALLET_NAME', adapter.name);
+          wallet = adapter;
+          this.subWallet();
+          this.getBalance();
 
-          this.wallet = wallet
-          this.loginModal = false
+          this.wallet = wallet;
+          this.loginModal = false;
           // if (context.query.redirect) {
           //   context.app.router.push(context.query.redirect)
           // } else {
@@ -106,25 +106,26 @@ export default (context, inject) => {
         }
       },
       onDisconnect () {
-        this.unsubWallet()
+        this.unsubWallet();
       },
       onWalletError (error) {
         if (['WalletNotFoundError', 'WalletNotInstalledError', 'WalletNotReadyError'].includes(error.name)) {
           const name = error.name
             .replace('Error', '')
             .split(/(?=[A-Z])/g)
-            .join(' ')
+            .join(' ');
           const message =
-            `Please install and initialize ${connectingAdapter.name} wallet extension first, <a href="${connectingAdapter.url}" target="_blank">click here to install extension</a>`
-          this.error = { name, message }
+            `Please install and initialize ${connectingAdapter.name} wallet extension first, 
+            <a href="${connectingAdapter.url}" target="_blank">click here to install extension</a>`;
+          this.error = { name, message };
 
-          return
+          return;
         }
         if (['SecurityError'].includes(error.name)) {
-          this.onConnect()
-          return
+          this.onConnect();
+          return;
         }
-        this.error = { name: 'Connect wallet failed', message: error.name }
+        this.error = { name: 'Connect wallet failed', message: error.name };
       },
 
       async getBalance () {
@@ -134,17 +135,17 @@ export default (context, inject) => {
             wallet.publicKey,
             {
               mint: new PublicKey('nosXBVoaCTtYdLvKY6Csb4AC8JCdQKKAaWYtx2ZMoo7')
-            })).value[0].account.data.parsed.info.tokenAmount.amount
-          console.log(this.balance)
+            })).value[0].account.data.parsed.info.tokenAmount.amount;
+          console.log(this.balance);
         }
       },
 
       async requestPayment ({ to, lamports }) {
         if (wallet && wallet.connected) {
-          const txid = await sendTransaction(web3, wallet, { destination: to, lamports })
-          return txid
+          const txid = await sendTransaction(web3, wallet, { destination: to, lamports });
+          return txid;
         }
-        return false
+        return false;
         /*
 
         return false;
@@ -164,18 +165,18 @@ export default (context, inject) => {
 
       async logout () {
         if (connectingAdapter) {
-          await connectingAdapter.disconnect()
-          connectingAdapter = null
-          this.wallet = null
+          await connectingAdapter.disconnect();
+          connectingAdapter = null;
+          this.wallet = null;
         }
-        this.clear()
+        this.clear();
       },
 
       clear () {
-        Object.assign(this.$data, this.$options.data.call(this))
+        Object.assign(this.$data, this.$options.data.call(this));
       }
     }
-  })
+  });
 
-  inject('sol', sol)
-}
+  inject('sol', sol);
+};

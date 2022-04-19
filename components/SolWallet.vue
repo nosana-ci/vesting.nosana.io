@@ -14,6 +14,7 @@
           <button class="delete" @click="error = null; solError = null" />
           {{ error }}
           <h2 class="subtitle">{{ solError.name }}</h2>
+          <!-- eslint-disable-next-line vue/no-v-html-->
           <p v-html="solError.message" />
         </div>
         <header class="modal-card-head">
@@ -84,36 +85,36 @@ export default {
       loading: false,
       error: null,
       isDisabled: false
-    }
+    };
   },
   computed: {
     publicKey () {
-      return this.$sol ? this.$sol.publicKey : null
+      return this.$sol ? this.$sol.publicKey : null;
     },
     loggedIn () {
-      return this.$sol && this.$sol.publicKey
+      return this.$sol && this.$sol.publicKey;
     },
     solError () {
-      return this.$sol && this.$sol.error
+      return this.$sol && this.$sol.error;
     }
   },
 
   methods: {
     async selectWallet (adapter) {
       if (adapter.readyState === 'NotDetected') {
-        window.open(adapter.url)
+        window.open(adapter.url);
       } else {
         try {
-          this.error = null
-          this.$sol.error = null
-          await this.$sol.connect(adapter)
+          this.error = null;
+          this.$sol.error = null;
+          await this.$sol.connect(adapter);
         } catch (error) {
-          this.error = error
+          this.error = error;
         }
       }
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

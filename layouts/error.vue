@@ -15,11 +15,16 @@
 <script>
 
 export default {
-  props: ['error'],
+  props: {
+    error: {
+      type: Object,
+      default: null
+    }
+  },
 
   data () {
     return {
-    }
+    };
   },
 
   computed: {
@@ -27,5 +32,5 @@ export default {
 
   methods: {
   }
-}
+};
 </script>
