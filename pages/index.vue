@@ -77,7 +77,12 @@
                 {{ +(vesting.total_amount / 1000000) }}
                 <span class="has-text-accent">NOS</span>
               </h3>
-              <progress style="margin:0; margin-left: auto; width: 50%" class="progress is-accent" :value="vesting.withdrawn_amount" :max="vesting.total_amount" />
+              <progress
+                style="margin:0; margin-left: auto; width: 50%"
+                class="progress is-accent"
+                :value="vesting.withdrawn_amount"
+                :max="vesting.total_amount"
+              />
               <div class="ml-2">
                 <i
                   class="fas fa-chevron-right"

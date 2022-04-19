@@ -12,7 +12,8 @@
     </section>
     <div class="container">
       <div
-        class="box is-horizontal-centered has-limited-width px-4 pb-6 pt-5 gradient-block has-border-gradient has-radius"
+        class="box is-horizontal-centered has-limited-width
+        px-4 pb-6 pt-5 gradient-block has-border-gradient has-radius"
       >
         <h2 class="title is-2 has-text-centered has-text-weight-medium mt-3">
           Bulk Vesting Contracts
@@ -139,9 +140,9 @@ function csvToJson (string, headers, quoteChar = '"', delimiter = ',') {
     `\\s*(${quoteChar})?(.*?)\\1\\s*(?:${delimiter}|$)`,
     'gs'
   );
-  const match = string =>
-    [...string.matchAll(regex)]
-      .map(match => match[2])
+  const match = str =>
+    [...str.matchAll(regex)]
+      .map(m => m[2])
       .filter((_, i, a) => i < a.length - 1); // cut off blank match at end
   const lines = string.split('\n');
   const heads = headers || match(lines.splice(0, 1)[0]);

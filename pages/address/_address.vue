@@ -285,7 +285,11 @@
           </div>
         </div>
         <div class="mb-2">
-          <div v-if="vesting && vesting.canceled_at.toNumber()" class="button is-medium is-danger is-fullwidth mt-5" disabled>
+          <div
+            v-if="vesting && vesting.canceled_at.toNumber()"
+            class="button is-medium is-danger is-fullwidth mt-5"
+            disabled
+          >
             Cancelled
           </div>
           <div

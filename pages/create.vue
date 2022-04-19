@@ -12,7 +12,8 @@
     </section>
     <div class="container">
       <div
-        class="box is-horizontal-centered has-limited-width px-4 pb-6 pt-5 gradient-block has-border-gradient has-radius"
+        class="box is-horizontal-centered has-limited-width
+        px-4 pb-6 pt-5 gradient-block has-border-gradient has-radius"
       >
         <h2 class="title is-2 has-text-centered has-text-weight-medium mb-6 mt-3">
           Vesting Contract
