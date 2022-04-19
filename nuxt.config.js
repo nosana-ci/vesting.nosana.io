@@ -1,5 +1,5 @@
 // eslint-disable-next-line nuxt/no-cjs-in-config
-require('./config.js')
+require('./config.js');
 
 export default {
   // Target: https://go.nuxtjs.dev/config-target
@@ -63,7 +63,7 @@ export default {
     extend (config, {}) {
       config.node = {
         fs: 'empty'
-      }
+      };
     },
     transpile: [
       '@solana/wallet-adapter-base',
@@ -86,11 +86,11 @@ export default {
     ],
     loaders: {
       scss: {
-        additionalData: "@import '~assets/scss/variables.scss';"
+        additionalData: '@import \'~assets/scss/variables.scss\';'
       }
     }
   },
   server: {
     host: '0.0.0.0'
   }
-}
+};

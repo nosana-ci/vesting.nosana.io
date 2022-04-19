@@ -19,7 +19,7 @@ export default {
 
   data () {
     return {
-    }
+    };
   },
 
   computed: {
@@ -27,5 +27,5 @@ export default {
 
   methods: {
   }
-}
+};
 </script>

@@ -177,27 +177,27 @@
 </template>
 
 <script>
-import { PublicKey, Keypair } from '@solana/web3.js'
-import Timelock from '@streamflow/timelock'
+import { PublicKey, Keypair } from '@solana/web3.js';
+import Timelock from '@streamflow/timelock';
 import {
   BN
-} from '@streamflow/timelock/node_modules/@project-serum/anchor'
-import ErrorModal from '@/components/ErrorModal'
+} from '@streamflow/timelock/node_modules/@project-serum/anchor';
+import ErrorModal from '@/components/ErrorModal';
 
 export default {
   components: {
     ErrorModal
   },
   data () {
-    const date = new Date()
-    let day = date.getDate()
-    let month = date.getMonth() + 1
-    const year = date.getFullYear()
+    const date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    const year = date.getFullYear();
 
-    if (month < 10) { month = '0' + month }
-    if (day < 10) { day = '0' + day }
+    if (month < 10) { month = '0' + month; }
+    if (day < 10) { day = '0' + day; }
 
-    const today = year + '-' + month + '-' + day
+    const today = year + '-' + month + '-' + day;
     return {
       amount: null,
       cliffAmount: 0,
@@ -212,53 +212,53 @@ export default {
       error: null,
       success: null,
       explorer: process.env.NUXT_ENV_BLOCKEXPLORER
-    }
+    };
   },
   computed: {
     solWallet () {
       return this.$sol && this.$sol.wallet && this.$sol.wallet.publicKey
         ? this.$sol.wallet.publicKey.toString()
-        : null
+        : null;
     }
   },
   watch: {
     start_date (newValue, oldValue) {
-      const date = new Date()
-      let day = date.getDate()
-      let month = date.getMonth() + 1
-      const year = date.getFullYear()
+      const date = new Date();
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      const year = date.getFullYear();
 
-      if (month < 10) { month = '0' + month }
-      if (day < 10) { day = '0' + day }
+      if (month < 10) { month = '0' + month; }
+      if (day < 10) { day = '0' + day; }
 
-      const today = year + '-' + month + '-' + day
+      const today = year + '-' + month + '-' + day;
       if (new Date(newValue) < date) {
-        this.start_date = today
+        this.start_date = today;
       }
-      const startDate = new Date(this.start_date)
-      date.setHours(0, 0, 0, 0)
-      startDate.setHours(0, 0, 0, 0)
+      const startDate = new Date(this.start_date);
+      date.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
       if (date.getTime() === startDate.getTime()) {
-        this.start_time = null
+        this.start_time = null;
       }
     },
     start_time (newValue, oldValue) {
-      const now = new Date()
-      const hours = now.getHours()
-      const minutes = now.getMinutes()
-      const startDate = new Date(this.start_date)
-      now.setHours(0, 0, 0, 0)
-      startDate.setHours(0, 0, 0, 0)
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const startDate = new Date(this.start_date);
+      now.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
       if (now.getTime() === startDate.getTime()) {
         if (!newValue) {
-          this.start_time = hours + ':' + (minutes + 2)
+          this.start_time = hours + ':' + (minutes + 2);
         } else {
-          const parts = newValue.split(':')
+          const parts = newValue.split(':');
           if (
             parseInt(parts[0]) < hours ||
             (parseInt(parts[0]) === hours && parseInt(parts[1]) < minutes + 2)
           ) {
-            this.start_time = hours + ':' + (minutes + 2)
+            this.start_time = hours + ':' + (minutes + 2);
           }
         }
       }
@@ -266,14 +266,14 @@ export default {
     end_time (newValue, oldValue) {
       if (this.start_date === this.end_date) {
         if (this.start_time && newValue) {
-          const partsStart = this.start_time.split(':')
-          const partsEnd = newValue.split(':')
+          const partsStart = this.start_time.split(':');
+          const partsEnd = newValue.split(':');
           if (
             parseInt(partsEnd[0]) < parseInt(partsStart[0]) ||
             (parseInt(partsEnd[0]) === parseInt(partsStart[0]) &&
               parseInt(partsEnd[1]) < parseInt(partsStart[1]) + 5)
           ) {
-            this.end_time = partsStart[0] + ':' + (parseInt(partsStart[1]) + 5)
+            this.end_time = partsStart[0] + ':' + (parseInt(partsStart[1]) + 5);
           }
         }
       }
@@ -282,23 +282,23 @@ export default {
   created () {},
   methods: {
     handleError (error) {
-      console.error(error)
+      console.error(error);
       if (error.response && error.response.data) {
         if (error.response.data.error) {
-          this.error = error.response.data.error
+          this.error = error.response.data.error;
         } else if (error.response.data.message) {
-          this.error = error.response.data.message
+          this.error = error.response.data.message;
         } else {
-          this.error = error.response.data
+          this.error = error.response.data;
         }
       } else if (error.message) {
-        this.error = error.message
+        this.error = error.message;
       } else {
-        this.error = error
+        this.error = error;
       }
     },
     async createVesting () {
-      this.loading = true
+      this.loading = true;
       try {
         /**
          * Creates a new stream/vesting contract. All fees are paid by sender. (escrow metadata account rent, escrow token account, recipient's associated token account creation
@@ -316,17 +316,17 @@ export default {
          * @param {BN} cliffAmount - Amount unlocked at the "cliff" timestamp
          */
         const start =
-          new Date(this.start_date + 'T' + this.start_time).getTime() / 1e3
-        let end = new Date(this.end_date + 'T' + this.end_time).getTime() / 1e3
+          new Date(this.start_date + 'T' + this.start_time).getTime() / 1e3;
+        let end = new Date(this.end_date + 'T' + this.end_time).getTime() / 1e3;
         if (end === start) {
-          end = start + 1
+          end = start + 1;
         }
-        const escrow = Keypair.generate()
-        const amount = new BN(this.amount * Math.pow(10, 6))
-        const mint = new PublicKey(process.env.NUXT_ENV_TOKEN_ADDRESS)
-        const period = this.releaseFrequency
-        const cliff = start
-        const cliffAmount = new BN(this.cliffAmount * Math.pow(10, 6))
+        const escrow = Keypair.generate();
+        const amount = new BN(this.amount * Math.pow(10, 6));
+        const mint = new PublicKey(process.env.NUXT_ENV_TOKEN_ADDRESS);
+        const period = this.releaseFrequency;
+        const cliff = start;
+        const cliffAmount = new BN(this.cliffAmount * Math.pow(10, 6));
 
         const response = await Timelock.create(
           this.$sol.web3,
@@ -341,16 +341,16 @@ export default {
           new BN(period),
           new BN(cliff),
           new BN(cliffAmount)
-        )
-        this.success = response
+        );
+        this.success = response;
       } catch (e) {
-        alert('something went wrong')
-        this.handleError(e)
+        alert('something went wrong');
+        this.handleError(e);
       }
-      this.loading = false
+      this.loading = false;
     }
   }
-}
+};
 </script>
 <style>
 ::-webkit-calendar-picker-indicator {
