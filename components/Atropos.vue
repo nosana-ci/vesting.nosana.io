@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'Altropos',
+  name: 'Atropos3D',
   props: {
     options: {
       type: [Array, Object],
