@@ -22,7 +22,7 @@
     "buffer-layout": "1.2.2",
     "bulma": "0.9.3",
     "bulma-tooltip": "3.0.2",
-    "core-js": "3.22.0",
+    "core-js": "3.22.1",
     "nuxt": "2.15.8",
     "remove": "0.1.5"
   },
