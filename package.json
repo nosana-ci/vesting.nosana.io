@@ -15,7 +15,7 @@
     "@nuxtjs/axios": "5.13.6",
     "@solana/spl-token": "0.2.0",
     "@solana/wallet-adapter-base": "0.9.5",
-    "@solana/wallet-adapter-wallets": "0.16.0",
+    "@solana/wallet-adapter-wallets": "0.16.1",
     "@solana/web3.js": "1.41.4",
     "@streamflow/timelock": "0.3.2",
     "atropos": "1.0.2",
