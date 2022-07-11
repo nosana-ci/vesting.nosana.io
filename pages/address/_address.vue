@@ -67,15 +67,55 @@
               </h3>
               <div class="has-text-weight-bold subtitle mb-1">
                 Recipient Address
+                <a @click="changeRecipientForm = true">
+                  <i
+                    v-if="vesting && vesting.recipient !== null
+                      && vesting.recipient.toString() === solWallet
+                      && parseInt(vesting.withdrawn_amount) !== parseInt(vesting.total_amount)"
+                    class="fas fa-edit"
+                  />
+                </a>
               </div>
               <h3 class="subtitle blockchain-address">
-                <span
-                  v-if="vesting && vesting.recipient !== null"
-                ><a
-                  :href="`${explorer}/address/${vesting.recipient}`"
-                  target="_blank"
-                >{{ vesting.recipient }}
-                  <i class="fas fa-external-link-alt" /></a></span><span v-else>...</span>
+                <span v-if="vesting && vesting.recipient !== null">
+                  <form v-if="changeRecipientForm" @submit.prevent="changeRecipient">
+                    <div class="field">
+                      <div class="control">
+                        <input
+                          v-model="newRecipient"
+                          required
+                          class="input"
+                          type="text"
+                          placeholder="New recipient address"
+                        >
+                      </div>
+                    </div>
+                    <div class="field is-grouped is-grouped-right">
+                      <p class="control">
+                        <a class="button is-outlined" @click="changeRecipientForm = false">
+                          Cancel
+                        </a>
+                      </p>
+                      <p class="control">
+                        <button
+                          type="submit"
+                          :disabled="loadingForm"
+                          :class="{'is-loading': loadingForm}"
+                          class="button is-accent"
+                        >
+                          Transfer
+                        </button>
+                      </p>
+                    </div>
+                  </form>
+                  <a
+                    v-else
+                    :href="`${explorer}/address/${vesting.recipient}`"
+                    target="_blank"
+                  >{{ vesting.recipient }}
+                    <i class="fas fa-external-link-alt" /></a>
+                </span>
+                <span v-else>...</span>
               </h3>
             </div>
           </div>
@@ -372,13 +412,16 @@ export default {
   },
   data () {
     return {
+      changeRecipientForm: false,
       address: this.$route.params.address,
       error: null,
       loading: false,
       success: null,
       refreshReleasable: true,
       explorer: process.env.NUXT_ENV_BLOCKEXPLORER,
-      vesting: null
+      vesting: null,
+      newRecipient: null,
+      loadingForm: false
     };
   },
 
@@ -433,6 +476,28 @@ export default {
   },
 
   methods: {
+    async changeRecipient () {
+      if (this.loadingForm) { return; };
+      if (confirm(`Are you sure you want to transfer your vesting contract to ${this.newRecipient}`) === true) {
+        try {
+          if (!this.newRecipient || this.newRecipient.length < 32) {
+            throw new Error('Not a valid recipient address');
+          }
+          const response = await Timelock.transferRecipient(
+            this.$sol.web3,
+            this.$sol.wallet,
+            '8e72pYCDaxu3GqMfeQ5r8wFgoZSYk6oua1Qo9XpsZjX',
+            new PublicKey(this.address),
+            new PublicKey(this.newRecipient)
+          );
+          console.log(response);
+          this.changeRecipientForm = false;
+          this.getVestingInfo();
+        } catch (e) {
+          this.handleError(e);
+        }
+      }
+    },
     calculateReleasable (start, end, total, released, cliff, period) {
       const now = new Date();
       if (now.getTime() / 1000 < start) { return 0; }
