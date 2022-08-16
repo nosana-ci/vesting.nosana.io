@@ -27,7 +27,7 @@
     "remove": "0.1.5"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "7.18.2",
+    "@babel/eslint-parser": "7.18.9",
     "@creativebulma/bulma-tooltip": "1.2.0",
     "@nuxtjs/eslint-config": "10.0.0",
     "@nuxtjs/eslint-module": "3.1.0",
