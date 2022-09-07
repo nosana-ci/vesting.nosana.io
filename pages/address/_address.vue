@@ -372,14 +372,15 @@
           }}</a>
         </div>
       </div>
+      <div class="has-text-centered my-6">
+        <p>Stake your NOS tokens and earn daily rewards and a chance to win a free NFT!</p>
+        <a class="button is-accent" href="https://app.nosana.io/stake" target="_blank">
+          <strong>Staking Dashboard</strong>
+        </a>
+      </div>
     </div>
   </div>
-  <!-- Educational Resources -->
-  <!-- <div class="has-text-centered my-6">
-      <a class="" href="https://nosana.io" target="_blank">
-        <strong>nosana.io</strong>
-      </a>
-    </div> -->
+
 </template>
 
 <script>
