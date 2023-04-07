@@ -380,7 +380,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -388,7 +387,7 @@ import Timelock from '@streamflow/timelock';
 import { PublicKey } from '@solana/web3.js';
 import {
   BN
-} from '@streamflow/timelock/node_modules/@project-serum/anchor';
+} from '@project-serum/anchor';
 import ErrorModal from '@/components/ErrorModal';
 const Layout = require('@streamflow/timelock/dist/layout');
 

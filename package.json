@@ -10,6 +10,11 @@
     "lint": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
     "lint:fix": "eslint --ext \".js,.vue\" --ignore-path .gitignore . --fix"
   },
+  "overrides": {
+    "@streamflow/timelock": {
+      "@project-serum/anchor": "0.23.0"
+    }
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "6.1.1",
     "@nuxtjs/axios": "5.13.6",
@@ -17,7 +22,7 @@
     "@solana/wallet-adapter-base": "0.9.5",
     "@solana/wallet-adapter-wallets": "0.16.1",
     "@solana/web3.js": "1.43.4",
-    "@streamflow/timelock": "0.3.2",
+    "@streamflow/timelock": "^0.3.2",
     "atropos": "1.0.2",
     "buffer-layout": "1.2.2",
     "bulma": "0.9.4",

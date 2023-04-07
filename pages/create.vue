@@ -182,7 +182,7 @@ import { PublicKey, Keypair } from '@solana/web3.js';
 import Timelock from '@streamflow/timelock';
 import {
   BN
-} from '@streamflow/timelock/node_modules/@project-serum/anchor';
+} from '@project-serum/anchor';
 import ErrorModal from '@/components/ErrorModal';
 
 export default {
