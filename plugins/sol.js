@@ -13,7 +13,7 @@ import { commitment, sendTransaction } from '@/utils/web3';
 const network = WalletAdapterNetwork.Mainnet;
 
 // You can also provide a custom RPC endpoint
-const endpoint = 'https://api.mainnet-beta.solana.com'; // clusterApiUrl(network)
+const endpoint = 'https://rpc.hellomoon.io/853e30f5-383d-4cc6-a5ee-b5fb4c7a7178'; // clusterApiUrl(network)
 const web3 = new Connection(endpoint, 'confirmed');
 
 // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking --
