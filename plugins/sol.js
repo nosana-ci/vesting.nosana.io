@@ -13,7 +13,7 @@ import { commitment, sendTransaction } from '@/utils/web3';
 const network = WalletAdapterNetwork.Mainnet;
 
 // You can also provide a custom RPC endpoint
-const endpoint = 'https://rpc.ironforge.network/mainnet?apiKey=01HSK29G2P0Q5G3B5JD6W08VZY'; // clusterApiUrl(network)
+const endpoint = 'https://rpc.ironforge.network/mainnet?apiKey=01HXY5BNJRYXRW05J6NE9YFQ3M'; // clusterApiUrl(network)
 const web3 = new Connection(endpoint, 'confirmed');
 
 // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking --
