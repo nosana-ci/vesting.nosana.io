@@ -42,7 +42,7 @@ pages:
   extends: .npm
   stage: deploy
   script:
-    - NODE_OPTIONS=--max_old_space_size=25384 npm run generate
+    - NODE_OPTIONS=--max_old_space_size=25384 npm install && npm run generate
     - |
       if [ -z ${SKIP_CACHEFLUSH} ] && [ -n ${FQDN} ]
       then
